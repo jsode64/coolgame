@@ -1,13 +1,15 @@
 #include <iostream>
 
-#include "SDL3/SDL.h"
+#include "raylib.h"
 
 int main() {
-    if (SDL_Init(SDL_INIT_VIDEO) >= 0) {
-        std::cout << "SDL works!" << std::endl;
-        return 0;
-    } else {
-        std::cout << "SDL didn't work!" << std::endl;
-        return 1;
+    InitWindow(800, 450, "Cool Game");
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(WHITE);
+        DrawText("Raylib works!", 0, 0, 20, BLACK);
+        EndDrawing();
     }
+    CloseWindow();
 }
