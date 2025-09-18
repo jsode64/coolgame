@@ -1,10 +1,10 @@
+cmake_minimum_required(VERSION 3.16)
 project(coolgame)
-set(CMAKE_CXX_STANDARD 26)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(raylib)
 
-add_executable(coolgame src/main.cpp)
+add_executable(coolgame src/main.cpp src/player.cpp src/stage.cpp)
 target_link_libraries(coolgame PRIVATE raylib)
 target_include_directories(coolgame PRIVATE inc)
