@@ -2,11 +2,13 @@
 
 #include "config.hpp"
 
+// Build Player
 Player::Player(Color color, int32_t leftKey, int32_t rightKey, int32_t upKey, int32_t downKey)
     : color(color), leftKey(leftKey), rightKey(rightKey), upKey(upKey), downKey(downKey) {
     respawn();
 }
 
+// Respawn function
 void Player::respawn() {
     body = (Rectangle){
         (WIN_W - Player::W) / 2.0,
@@ -18,12 +20,14 @@ void Player::respawn() {
     onGround = false;
 }
 
+// This updates the player condition.
 void Player::update(const Stage& stage) {
+
+    // Checks keystrokes
     if (IsKeyDown(KEY_R)) {
         respawn();
         return;
     }
-
     if (IsKeyDown(leftKey)) {
         v.x -= Player::ACCELERATION;
     }
@@ -38,17 +42,31 @@ void Player::update(const Stage& stage) {
         v.y = 0;
     }
 
-    v.y += Player::GRAITY;
+    // Gravity
+    v.y += Player::GRAVITY;
 
-    body.x += v.x;
+    // Velocity
+    body.x += v.x;      
     body.y += v.y;
 
-    if (CheckCollisionRecs(body, stage.get_body())) {
-        body.y = stage.get_body().y - Player::H;
+    // Collision
+    auto [hit, rect] = stage.get_collision(body);
+
+    if (hit) {
+        body.y = rect.y - Player::H;
         onGround = true;
+    } else {
+        onGround = false;
     }
+
+    // Deathzone
+    if (body.x  > WIN_W || body.x + Player::W < 0 || body.y > WIN_H) {
+        respawn();
+    }
+    
 }
 
+// Draws player (Obviously)
 void Player::draw() const {
     DrawRectangleRec(body, color);
 }

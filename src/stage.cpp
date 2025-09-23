@@ -1,14 +1,33 @@
 #include "stage.hpp"
 
-Stage::Stage(float x, float y, float w, float h, Color color)
-    :body({ x, y, w, h }), color(color) {
+#include <random>
+
+Stage::Stage() : bodies(), color(BLACK) {
 
 }
 
-Rectangle Stage::get_body() const {
-    return body;
+Stage Stage::new_random() {
+    Stage stage;
+
+    // Give bodies.
+    stage.bodies.push_back((Rectangle){ 200, 300, 400, 150 });
+    stage.bodies.push_back((Rectangle){ 100, 200, 100, 250 });
+
+    return stage;
+}
+
+std::tuple<bool, Rectangle> Stage::get_collision(Rectangle a) const {
+    for (const auto& b : bodies) {
+        if (CheckCollisionRecs(a, b)) {
+            return std::make_tuple(true, b);
+        }
+    }
+
+    return std::make_tuple(false, (Rectangle){ 0 });
 }
 
 void Stage::draw() const {
-    DrawRectangleRec(body, color);
+    for (const auto& body : bodies) {
+        DrawRectangleRec(body, color);
+    }
 }

@@ -2,22 +2,27 @@
 
 #include "raylib.h"
 
+#include <tuple>
+#include <vector>
+
 class Stage {
     private:
 
-        Rectangle body;
+        /// @brief A collection of the stage's bodies.
+        std::vector<Rectangle> bodies;
+
+        /// @brief The stage's color.
         Color color;
 
     public:
-        Stage(float x, float y, float w, float h, Color color);
+        Stage();
 
-        /**
-         * Returns the stage's body.
-         */
-        Rectangle get_body() const;
+        /// @return A new random stage.
+        static Stage new_random();
 
-        /**
-         * Draws the platform.
-         */
+        /// @return If any body collides with one of the stage's, returns `true` and itself.
+        std::tuple<bool, Rectangle> get_collision(Rectangle body) const;
+
+        /// @brief Draws the stage.
         void draw() const;
 };

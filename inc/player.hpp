@@ -24,7 +24,7 @@ class Player {
 
         static constexpr float ACCELERATION = 0.5;
 
-        static constexpr float GRAITY = 0.5;
+        static constexpr float GRAVITY = 0.5;
 
         static constexpr float W = 15.0;
 
