@@ -1,4 +1,5 @@
 #include "stage.hpp"
+#include "config.hpp"
 
 #include <random>
 
@@ -12,18 +13,29 @@ Stage Stage::new_random() {
     // Give bodies.
     stage.bodies.push_back((Rectangle){ 200, 300, 400, 150 });
     stage.bodies.push_back((Rectangle){ 100, 200, 100, 250 });
+    stage.bodies.push_back((Rectangle){ 600, 250, 100, 100 });
 
     return stage;
 }
 
-std::tuple<bool, Rectangle> Stage::get_collision(Rectangle a) const {
-    for (const auto& b : bodies) {
-        if (CheckCollisionRecs(a, b)) {
-            return std::make_tuple(true, b);
-        }
-    }
+// WIP
+Stage Stage::stage_one(){
+    Stage stage;
+    
+    float center_x = WIN_W / 2;
+    float center_y =  WIN_H / 2;
+    stage.bodies.push_back((Rectangle){ center_x, center_y, 400, 100});
 
-    return std::make_tuple(false, (Rectangle){ 0 });
+    Rectangle platform= {100, 100, 80, 20};
+    Vector2 platform_vec = {0.0f, 2.0f};
+
+    bool isPlatformPresent = true;
+    const double toggleTime = 3.0;
+
+}
+
+const std::vector<Rectangle>& Stage::get_bodies() const {
+    return bodies;
 }
 
 void Stage::draw() const {

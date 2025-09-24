@@ -21,8 +21,10 @@ class Stage {
         static Stage new_random();
 
         /// @return If any body collides with one of the stage's, returns `true` and itself.
-        std::tuple<bool, Rectangle> get_collision(Rectangle body) const;
+        const std::vector<Rectangle>& get_bodies() const;
 
         /// @brief Draws the stage.
         void draw() const;
+
+        Stage stage_one();
 };

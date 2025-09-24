@@ -11,10 +11,6 @@ int main() {
     InitWindow(WIN_W, WIN_H, "Cool Game");
     SetTargetFPS(60);
 
-    // Load placeholder image, convert from cpu image to gpu texture
-    Image placeholder = LoadImage("resources/placeholderman.png");
-    Texture2D placeholderman = LoadTextureFromImage(placeholder);
-    UnloadImage(placeholder);
 
     Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
     Player dummy(WHITE, 0, 0, 0, 0);
@@ -31,9 +27,6 @@ int main() {
         ClearBackground(BLUE);
         DrawFPS(0, 0);
         
-        //Draw placeholder guy
-        DrawTexture(placeholderman, 100, 100, WHITE);
-
         p.draw();
         dummy.draw();
         stage.draw();
