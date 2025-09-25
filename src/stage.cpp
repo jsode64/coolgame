@@ -1,26 +1,36 @@
 #include "stage.hpp"
+
 #include "config.hpp"
+#include "tile.hpp"
 
-#include <random>
+#include <cmath>
+#include <numbers>
 
-Stage::Stage() : bodies(), color(BLACK) {
+Stage::Stage() : tiles(), color(BLACK) {
 
 }
 
-Stage Stage::new_random() {
+Stage Stage::test() {
     Stage stage;
 
     // Give bodies.
-    stage.bodies.push_back((Rectangle){ 200, 300, 400, 150 });
-    stage.bodies.push_back((Rectangle){ 100, 200, 100, 250 });
-    stage.bodies.push_back((Rectangle){ 600, 250, 100, 100 });
+    stage.tiles.push_back(Tile((Rectangle){ 200, 300, 400, 150 }));
+    stage.tiles.push_back((Rectangle){ 100, 200, 100, 250 });
+    stage.tiles.push_back((Rectangle){ 600, 250, 100, 100 });
+    stage.tiles.push_back(Tile(300, 100, 200, 50, [](const Tile& tile){
+        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi) * 300.0);
+        return (Vector2){ x - tile.body.x, 0.0f };
+    }));
 
     return stage;
 }
 
 // WIP
 Stage Stage::stage_one(){
-    Stage stage;
+    /*Stage stage;
+    stage.tiles.push_back(Tile(100, 100, 80, 20, [](const Tile& _){return (Vector2){0.0f, .20f}}))
+    
+
     
     float center_x = WIN_W / 2;
     float center_y =  WIN_H / 2;
@@ -31,15 +41,21 @@ Stage Stage::stage_one(){
 
     bool isPlatformPresent = true;
     const double toggleTime = 3.0;
-
+    */
 }
 
-const std::vector<Rectangle>& Stage::get_bodies() const {
-    return bodies;
+const std::vector<Tile>& Stage::get_bodies() const {
+    return tiles;
+}
+
+void Stage::update() {
+    for (auto& tile : tiles) {
+        tile.update();
+    }
 }
 
 void Stage::draw() const {
-    for (const auto& body : bodies) {
-        DrawRectangleRec(body, color);
+    for (const auto& tile : tiles) {
+        DrawRectangleRec(tile.body, color);
     }
 }

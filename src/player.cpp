@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include "config.hpp"
-#include "util.hpp"
 
 Player::Player(Color color, int32_t leftKey, int32_t rightKey, int32_t upKey, int32_t downKey)
     : color(color), leftKey(leftKey), rightKey(rightKey), upKey(upKey), downKey(downKey) {
@@ -79,26 +78,42 @@ void Player::collide_with(const Stage& stage) {
     float y = body.y + v.y;
     onGround = false;
 
-    for (const auto& rect : stage.get_bodies()) {
+    for (const auto& tile : stage.get_bodies()) {
         // Horizontal collision check.
         auto testBody = (Rectangle){ x, body.y, body.width, body.height };
-        if (recs_collide(testBody, rect)) {
-            if (v.x > 0.0f) {
-                x = rect.x - body.width;
+        if (CheckCollisionRecs(testBody, tile.body)) {
+            if (v.x >= 0.0f) {
+                if (tile.v.x > v.x) {
+                    x = tile.body.x + tile.body.width;
+                    v.x = tile.v.x;
+                } else {
+                    x = tile.body.x - body.width;
+                    v.x = 0.0;
+                }
             } else {
-                x = rect.x + rect.width;
+                if (tile.v.x < v.x) {
+                    x = tile.body.x - body.width;
+                    v.x = tile.v.x;
+                } else {
+                    x = tile.body.x + tile.body.width;
+                    v.x = 0.0;
+                }
             }
-            v.x = 0.0f;
+            x += tile.v.x;
         }
 
         // Vertical collision check.
         testBody = (Rectangle){ x, y, body.width, body.height };
-        if (recs_collide(testBody, rect)) {
+        if (CheckCollisionRecs(testBody, tile.body)) {
             if (v.y >= 0.0f) {
-                y = rect.y - body.height;
+                y = tile.body.y - body.height;
+
+                // On ground.
                 onGround = true;
+                x += tile.v.x;
+                y += tile.v.y;
             } else {
-                y = rect.y + rect.height;
+                y = tile.body.y + tile.body.height;
             }
             v.y = 0.0f;
         }

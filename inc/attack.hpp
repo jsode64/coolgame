@@ -5,7 +5,7 @@
 
 #include "raylib.h"
 
-class Attack {
+/*class Attack {
     private:
         Rectangle hitbox;
         Rectangle hurtbox;
@@ -32,4 +32,4 @@ class Attack {
 
 
 
-};
+};*/

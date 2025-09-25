@@ -15,12 +15,13 @@ int main() {
     Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
     Player dummy(WHITE, 0, 0, 0, 0);
 
-    Stage stage = Stage::new_random();
+    Stage stage = Stage::test();
 
     // Main game loop
     while (!WindowShouldClose()) {
         p.update(stage);
         dummy.update(stage);
+        stage.update();
 
         // Render in here:
         BeginDrawing();
