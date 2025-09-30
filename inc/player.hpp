@@ -1,6 +1,7 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
+#include <optional>
 
 #include "raylib.h"
 
@@ -13,7 +14,7 @@ class Player {
         Vector2 v;
         Color color;
 
-        bool onGround;
+        std::optional<const Tile*> ground;
 
         int32_t leftKey;
         int32_t rightKey;
@@ -50,7 +51,13 @@ class Player {
          */
         void draw() const;
 
+        Rectangle get_body() const;
+
+ 
     private:
+
+
+
         // Player update methods, in the order they are called in `Player::update`:
 
         /**
@@ -67,4 +74,6 @@ class Player {
          * Handles player collision with the given stage.
          */
         void collide_with(const Stage& stage);
+
+        
 };

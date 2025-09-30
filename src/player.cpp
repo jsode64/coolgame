@@ -21,7 +21,7 @@ void Player::respawn() {
 
     // Make immobile and airborn.
     v = (Vector2){ 0.0f, 0.0f };
-    onGround = false;
+    ground = std::nullopt;
 }
 
 void Player::update(const Stage& stage) {
@@ -32,6 +32,10 @@ void Player::update(const Stage& stage) {
 
 void Player::draw() const {
     DrawRectangleRec(body, color);
+}
+
+Rectangle Player::get_body() const {
+    return body;
 }
 
 void Player::do_movement() {
@@ -47,8 +51,9 @@ void Player::do_movement() {
     }
 
     // Vertical movement.
-    if (IsKeyDown(upKey) && onGround) {
+    if (IsKeyDown(upKey) && ground.has_value()) {
         v.y = -JUMP_SPEED;
+        v.x += ground.value()->v.x;
     } else {
         v.y += GRAVITY;
     }
@@ -64,9 +69,9 @@ void Player::do_movement() {
 }
 
 void Player::handle_oob() {
-    bool oob = body.x < -body.width
-        || body.x > WIN_W
-        || body.y > WIN_H;
+    bool oob = body.x <= -body.width
+        || body.x >= WIN_W
+        || body.y >= WIN_H;
     
     if (oob) {
         respawn();
@@ -76,7 +81,13 @@ void Player::handle_oob() {
 void Player::collide_with(const Stage& stage) {
     float x = body.x + v.x;
     float y = body.y + v.y;
-    onGround = false;
+
+    // If on a tile, move with it.
+    if (ground.has_value()) {
+        x += ground.value()->v.x;
+    }
+
+    ground = std::nullopt;
 
     for (const auto& tile : stage.get_bodies()) {
         // Horizontal collision check.
@@ -85,21 +96,20 @@ void Player::collide_with(const Stage& stage) {
             if (v.x >= 0.0f) {
                 if (tile.v.x > v.x) {
                     x = tile.body.x + tile.body.width;
-                    v.x = tile.v.x;
+                    v.x += tile.v.x;
                 } else {
                     x = tile.body.x - body.width;
-                    v.x = 0.0;
+                    v.x = 0.0f;
                 }
             } else {
                 if (tile.v.x < v.x) {
                     x = tile.body.x - body.width;
-                    v.x = tile.v.x;
+                    v.x += tile.v.x;
                 } else {
                     x = tile.body.x + tile.body.width;
-                    v.x = 0.0;
+                    v.x = 0.0f;
                 }
             }
-            x += tile.v.x;
         }
 
         // Vertical collision check.
@@ -109,8 +119,7 @@ void Player::collide_with(const Stage& stage) {
                 y = tile.body.y - body.height;
 
                 // On ground.
-                onGround = true;
-                x += tile.v.x;
+                ground = std::optional<const Tile*>{ &tile };
                 y += tile.v.y;
             } else {
                 y = tile.body.y + tile.body.height;

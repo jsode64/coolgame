@@ -4,5 +4,6 @@ cmake_install.cmake
 Makefile
 
 build
+run.sh
 
 .vscode

@@ -21,10 +21,10 @@ Tile::Tile(float x, float y, float w, float h, std::function<Vector2(const Tile&
 }
 
 void Tile::update() {
+    // Update velocity.
+    v = updateFn(*this);
+
     // Update position.
     body.x += v.x;
     body.y += v.y;
-
-    // Update velocity.
-    v = updateFn(*this);
 }

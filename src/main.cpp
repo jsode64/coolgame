@@ -5,23 +5,29 @@
 #include "config.hpp"
 #include "player.hpp"
 #include "stage.hpp"
+#include "attack.hpp"
 
 int main() {
     // Initialize window.
     InitWindow(WIN_W, WIN_H, "Cool Game");
     SetTargetFPS(60);
 
+    //Image Loading
+    Texture2D playerImg = LoadTexture("assets/placeholderman.png");
 
     Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
     Player dummy(WHITE, 0, 0, 0, 0);
+
+    Attack jab(GREEN, BLUE, KEY_F);
 
     Stage stage = Stage::test();
 
     // Main game loop
     while (!WindowShouldClose()) {
+        stage.update();
         p.update(stage);
         dummy.update(stage);
-        stage.update();
+        jab.update(p);
 
         // Render in here:
         BeginDrawing();
@@ -35,5 +41,8 @@ int main() {
         EndDrawing();
     }
 
+    //Unload Images
+    UnloadTexture(playerImg);
+    
     CloseWindow();
 }

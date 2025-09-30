@@ -18,7 +18,7 @@ Stage Stage::test() {
     stage.tiles.push_back((Rectangle){ 100, 200, 100, 250 });
     stage.tiles.push_back((Rectangle){ 600, 250, 100, 100 });
     stage.tiles.push_back(Tile(300, 100, 200, 50, [](const Tile& tile){
-        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi) * 300.0);
+        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi / 4.0) * 300.0);
         return (Vector2){ x - tile.body.x, 0.0f };
     }));
 
