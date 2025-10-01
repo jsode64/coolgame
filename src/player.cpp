@@ -27,7 +27,7 @@ void Player::respawn() {
 void Player::update(const Stage& stage) {
     do_movement();
     handle_oob();
-    collide_with(stage);
+    handle_collision(stage);
 }
 
 void Player::draw() const {
@@ -40,13 +40,15 @@ Rectangle Player::get_body() const {
 
 void Player::do_movement() {
     // Horizontal movement.
-    bool hMove = false;
-    if (IsKeyDown(leftKey)) {
-        v.x -= ACCELERATION;
+    bool left = IsKeyDown(leftKey);
+    bool right = IsKeyDown(rightKey);
+    bool hMove = left != right;
+    if (left) {
+        v.x -= std::clamp(v.x - -MAX_SPEED, 0.0f, ACCELERATION);
         hMove = true;
     }
-    if (IsKeyDown(rightKey)) {
-        v.x += ACCELERATION;
+    if (right) {
+        v.x += std::clamp(MAX_SPEED - v.x, 0.0f, ACCELERATION);
         hMove = true;
     }
 
@@ -58,13 +60,13 @@ void Player::do_movement() {
         v.y += GRAVITY;
     }
 
-    // Deccelerate if no horizontal movement key was pressed.
-    if (!hMove) {
-        v.x -= (std::abs(v.x) <= DECCELERATION) ? v.x : std::copysign(DECCELERATION, v.x);
+    // Deccelerate if neutral input or moving against current direction.
+    if (!hMove || (left && v.x > 0.0f) || (right && v.x < 0.0f)) {
+        v.x = (std::abs(v.x) <= DECCELERATION) ? 0.0f : v.x - std::copysign(DECCELERATION, v.x);
     }
 
     // Limit player speed.
-    v.x = std::clamp(v.x, -MAX_SPEED, MAX_SPEED);
+    //v.x = std::clamp(v.x, -MAX_SPEED, MAX_SPEED);
     v.y = std::min(v.y, 2.0f * MAX_SPEED);
 }
 
@@ -78,7 +80,7 @@ void Player::handle_oob() {
     }
 }
 
-void Player::collide_with(const Stage& stage) {
+void Player::handle_collision(const Stage& stage) {
     float x = body.x + v.x;
     float y = body.y + v.y;
 
@@ -93,7 +95,7 @@ void Player::collide_with(const Stage& stage) {
         // Horizontal collision check.
         auto testBody = (Rectangle){ x, body.y, body.width, body.height };
         if (CheckCollisionRecs(testBody, tile.body)) {
-            if (v.x >= 0.0f) {
+            if (v.x > 0.0f) {
                 if (tile.v.x > v.x) {
                     x = tile.body.x + tile.body.width;
                     v.x += tile.v.x;
@@ -101,7 +103,7 @@ void Player::collide_with(const Stage& stage) {
                     x = tile.body.x - body.width;
                     v.x = 0.0f;
                 }
-            } else {
+            } else if (v.x < 0.0f) {
                 if (tile.v.x < v.x) {
                     x = tile.body.x - body.width;
                     v.x += tile.v.x;
@@ -109,6 +111,14 @@ void Player::collide_with(const Stage& stage) {
                     x = tile.body.x + tile.body.width;
                     v.x = 0.0f;
                 }
+            } else {
+                // Player not moving, tile must have hit them.
+                if (tile.v.x > 0.0f) {
+                    x = tile.body.x + tile.body.width;
+                } else {
+                    x = tile.body.x - body.width;
+                }
+                v.x += tile.v.x;
             }
         }
 

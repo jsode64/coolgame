@@ -55,9 +55,6 @@ class Player {
 
  
     private:
-
-
-
         // Player update methods, in the order they are called in `Player::update`:
 
         /**
@@ -73,7 +70,5 @@ class Player {
         /**
          * Handles player collision with the given stage.
          */
-        void collide_with(const Stage& stage);
-
-        
+        void handle_collision(const Stage& stage);
 };

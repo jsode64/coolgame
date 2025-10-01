@@ -14,11 +14,15 @@ Stage Stage::test() {
     Stage stage;
 
     // Give bodies.
-    stage.tiles.push_back(Tile((Rectangle){ 200, 300, 400, 150 }));
-    stage.tiles.push_back((Rectangle){ 100, 200, 100, 250 });
-    stage.tiles.push_back((Rectangle){ 600, 250, 100, 100 });
+    stage.tiles.push_back(Tile((Rectangle){ 200, 400, 600, 50 }));
+    stage.tiles.push_back((Rectangle){ 100, 300, 100, 150 });
+    stage.tiles.push_back((Rectangle){ 600, 300, 200, 50 });
     stage.tiles.push_back(Tile(300, 100, 200, 50, [](const Tile& tile){
-        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi / 4.0) * 300.0);
+        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi * 2.0) * 300.0);
+        return (Vector2){ x - tile.body.x, 0.0f };
+    }));
+    stage.tiles.push_back(Tile(600, 350, 50, 50, [](const Tile& tile){
+        float x = 450.0f + (std::sin(GetTime() * std::numbers::pi * 2.0) * 100.0);
         return (Vector2){ x - tile.body.x, 0.0f };
     }));
 
