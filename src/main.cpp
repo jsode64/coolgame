@@ -6,6 +6,8 @@
 #include "player.hpp"
 #include "stage.hpp"
 #include "attack.hpp"
+#include "fighters/oscar.hpp"
+#include "fighters/luie.hpp"
 
 int main() {
     // Initialize window.
@@ -15,8 +17,9 @@ int main() {
     //Image Loading
     Texture2D playerImg = LoadTexture("assets/placeholderman.png");
 
-    Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
-    Player dummy(WHITE, 0, 0, 0, 0);
+    //Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
+    Luie d(KEY_A, KEY_D, KEY_W);
+    Oscar p(KEY_LEFT, KEY_RIGHT, KEY_UP);
 
     Attack jab(GREEN, BLUE, KEY_F);
 
@@ -26,8 +29,8 @@ int main() {
     while (!WindowShouldClose()) {
         stage.update();
         p.update(stage);
-        dummy.update(stage);
-        jab.update(p);
+        d.update(stage);
+        //jab.update(p);
 
         // Render in here:
         BeginDrawing();
@@ -35,7 +38,7 @@ int main() {
         DrawFPS(0, 0);
         
         p.draw();
-        dummy.draw();
+        d.draw();
         stage.draw();
 
         EndDrawing();
