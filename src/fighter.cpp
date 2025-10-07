@@ -4,8 +4,14 @@
 
 #include "config.hpp"
 
-Fighter::Fighter(Rectangle body, float jumpSpeed, int32_t leftKey, int32_t rightKey, int32_t jumpKey)
-    : body(body), v({ 0.0f, 0.0f }), jumpSpeed(jumpSpeed), ground(std::nullopt), leftKey(leftKey), rightKey(rightKey), jumpKey(jumpKey) {
+
+
+// Out-of-line virtual destructor definition ensures vtable/typeinfo are emitted.
+Fighter::~Fighter() = default;
+
+Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration, float decceleration, float maxSpeedH, int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey)
+    : body(body), v({ 0.0f, 0.0f }), jumpSpeed(jumpSpeed), acceleration(acceleration), decceleration(decceleration),
+        maxSpeedH(maxSpeedH), ground(std::nullopt), leftKey(leftKey), rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey) {
 
 }
 
@@ -18,17 +24,30 @@ void Fighter::respawn() {
     ground = std::nullopt;
 }
 
-void Fighter::handle_movement(float a, float d, float m) {
+Rectangle Fighter::get_body() const {
+    return body;
+}
+
+bool Fighter::on_ground() const {
+    return ground.has_value();
+}
+
+void Fighter::knock_back(Vector2 kb) {
+    v.x += kb.x;
+    v.y += kb.y;
+}
+
+void Fighter::handle_movement() {
     // Horizontal movement.
     bool left = IsKeyDown(leftKey);
     bool right = IsKeyDown(rightKey);
     bool hMove = left != right;
     if (left) {
-        v.x -= std::clamp(v.x - -m, 0.0f, a);
+        v.x -= std::clamp(v.x - -maxSpeedH, 0.0f, acceleration);
         hMove = true;
     }
     if (right) {
-        v.x += std::clamp(m - v.x, 0.0f, a);
+        v.x += std::clamp(maxSpeedH - v.x, 0.0f, acceleration);
         hMove = true;
     }
 
@@ -42,11 +61,11 @@ void Fighter::handle_movement(float a, float d, float m) {
 
     // Deccelerate if neutral input or moving against current direction.
     if (!hMove || (left && v.x > 0.0f) || (right && v.x < 0.0f)) {
-        v.x = (std::abs(v.x) <= d) ? 0.0f : v.x - std::copysign(d, v.x);
+        v.x = (std::abs(v.x) <= decceleration) ? 0.0f : v.x - std::copysign(decceleration, v.x);
     }
 
     // Limit player speed.
-    v.y = std::min(v.y, 2.0f * m);
+    v.y = std::min(v.y, 2.0f * maxSpeedH);
 }
 
 void Fighter::handle_oob() {
@@ -120,4 +139,14 @@ void Fighter::handle_collision(const Stage& stage) {
     // Move to new position.
     body.x = x;
     body.y = y;
+}
+
+void Fighter::handle_attacks(std::vector<Attack>& attacks) {
+    if (IsKeyDown(attackKey)) {
+        if (on_ground()) {
+            attacks.push_back(ground_attack());
+        } else {
+            attacks.push_back(air_attack());
+        }
+    }
 }

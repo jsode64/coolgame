@@ -13,9 +13,13 @@ class Oscar : public Fighter {
 
     public:
 
-        Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey);
+        Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
 
-        void update(const Stage& stage) override;
+        Attack ground_attack() override;
+
+        Attack air_attack() override;
+
+        void update(const Stage& stage, std::vector<Attack>& attacks) override;
 
         void draw() const override;
 };

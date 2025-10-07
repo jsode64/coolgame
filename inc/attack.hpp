@@ -2,54 +2,52 @@
 #pragma once
 
 #include <stdint.h>
+#include <functional>
 
 #include "raylib.h"
 
-#include "player.hpp"
+#include "fighter.hpp"
+#include <memory>
+#include <vector>
+
+class Fighter;
 
 class Attack {
     private:
+        // The fighter the attack came from.
+        Fighter* src;
 
+        // Attack collision box.
         Rectangle hitbox;
-        Rectangle hurtbox;
-        Vector2 v1;
-        Vector2 v2;
-        Color color1;
-        Color color2;
 
-        bool attackHit;
+        // Attack knockback.
+        Vector2 kb;
 
-        int32_t attackKey;
+        // The number of ticks the attack has been alive for.
+        uint32_t ticks;
+
+        // Attack update
+        std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn;
+
+        // Draw callback.
+        std::function<void(const Attack&)> drawFn;
 
     public:
 
-        Attack(Color color1, Color color2, int32_t attackKey);
+        Attack(Fighter* src, Rectangle hitbox, Vector2 kb, std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn, std::function<void(const Attack&)> drawFn);
 
-        static constexpr float W = 10.0;
+        // Sets the attack's hitbox.
+        void set_hitbox(Rectangle hitbox);
 
-        static constexpr float H = 10.0;
+        // Returns the attack's tick lifetime.
+        uint32_t get_ticks() const;
 
-        static constexpr float KB = 1000.0;
+        // Updates the attack. Returns true if the attack is finished and should be removed.
+        bool update(std::vector<std::unique_ptr<Fighter>>& fighters);
 
-        /**
-         * Updates the player.
-         * 
-         * @param player 
-         */
-        void update(const Player& p);
+        // Draws the attack.
+        void draw() const;
 
-    private:
-
-        // Checks collision with hurtbox.
-        void collideWithHurtbox(const Rectangle& hurtbox);
-
-        void moveWithPlayer(const Player& p);
-
-        // Draws attack hitbox and hurtbox.
-        void draw();
-
-        void checkAttackKey(const Player& p);
-
-
-
+        // Checks for collision with the given fighters and knocks them back.
+        void handle_collision(std::vector<std::unique_ptr<Fighter>>& fighters);
 };

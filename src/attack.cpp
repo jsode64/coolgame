@@ -2,41 +2,41 @@
 
 #include "raylib.h"
 
-Attack::Attack(Color color1, Color color2, int32_t attackKey) : color1(color1), color2(color2), attackKey(attackKey) {
+Attack::Attack(Fighter* src, Rectangle hitbox, Vector2 kb, std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn, std::function<void(const Attack&)> drawFn)
+    : src(src), hitbox(hitbox), kb(kb), ticks(0), updateFn(updateFn), drawFn(drawFn) {
 
 }
 
-void Attack::update(const Player& p) {
-    checkAttackKey(p);
+void Attack::set_hitbox(Rectangle hitbox_) {
+    hitbox = hitbox_;
 }
 
-void Attack::moveWithPlayer(const Player& p) {
-     Rectangle playerBody = p.get_body();
-     hurtbox.x = playerBody.x;
-     hurtbox.y = playerBody.y;
-     hurtbox.height = playerBody.height;
-     hurtbox.width = playerBody.width;
-
-     hitbox.x = playerBody.x + 40;
-     hitbox.y = playerBody.y;
-     hitbox.height = H;
-     hitbox.width = W;
+uint32_t Attack::get_ticks() const {
+    return ticks;
 }
 
-void Attack::checkAttackKey(const Player& p) {
-    if (IsKeyDown(attackKey)) {
-        moveWithPlayer(p);
-        collideWithHurtbox(hurtbox);
-        draw();
+bool Attack::update(std::vector<std::unique_ptr<Fighter>>& fighters) {
+    bool done = updateFn(*this, fighters);
+    ticks += 1;
+
+    return done;
+}
+
+void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>>& fighters) {
+    for (auto& fighterPtr: fighters) {
+        auto& fighter = *fighterPtr;
+        // Skip source fighter.
+        if (src == &fighter) {
+            continue;
+        }
+
+        // Knock back if collided.
+        if (CheckCollisionRecs(hitbox, fighter.get_body())) {
+            fighter.knock_back(kb);
+        }
     }
 }
 
-void Attack::draw() {
-    DrawRectangleRec(hitbox, color1);
-    DrawRectangleRec(hurtbox, color2);
+void Attack::draw() const {
+    drawFn(*this);
 }
-
-void Attack::collideWithHurtbox(const Rectangle& hurtbox) {
-    
-}
-
