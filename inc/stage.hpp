@@ -20,6 +20,7 @@ class Stage {
 
         /// @return Returns the test stage.
         static Stage test();
+        static Stage stage_one();
 
         /// @return If any body collides with one of the stage's, returns `true` and itself.
         const std::vector<Tile>& get_bodies() const;
@@ -29,6 +30,4 @@ class Stage {
 
         /// @brief Draws the stage.
         void draw() const;
-
-        Stage stage_one();
 };
