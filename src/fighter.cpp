@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include <cmath>
+
 #include "config.hpp"
 
 

@@ -5,9 +5,15 @@
 #include "config.hpp"
 #include "game.hpp"
 
+
+
 int main() {
     // Initialize window.
     InitWindow(WIN_W, WIN_H, "Cool Game");
+
+    // Initialize Audio
+    void InitAudioDevice();
+
     SetTargetFPS(60);
 
     Game game;
