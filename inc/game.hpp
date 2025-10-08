@@ -15,6 +15,7 @@ class Game {
     std::vector<std::unique_ptr<Fighter>> fighters;
         std::vector<Attack> attacks;
 
+
     public:
 
         Game();
@@ -22,4 +23,5 @@ class Game {
         void update();
 
         void draw() const;
+
 };
