@@ -61,11 +61,10 @@ void Fighter::handle_movement() {
     }
 
     // Deccelerate if neutral input or moving against current direction.
-    /*
     if (!hMove || (left && v.x > 0.0f) || (right && v.x < 0.0f)) {
         v.x = (std::abs(v.x) <= decceleration) ? 0.0f : v.x - std::copysign(decceleration, v.x);
     }
-    */
+
     // Limit player speed.
     v.y = std::min(v.y, 2.0f * maxSpeedH);
 }
@@ -120,11 +119,6 @@ void Fighter::handle_collision(const Stage& stage) {
                 }
                 v.x += tile.v.x;
             }
-
-            if (tile.mov_tile == true && tile.touch == false)
-            {
-                DrawText("Both are true.", 100, 300, 20, BLACK);
-            }
         }
 
         // Vertical collision check.
@@ -140,8 +134,7 @@ void Fighter::handle_collision(const Stage& stage) {
                 y = tile.body.y + tile.body.height;
             }
             v.y = 0.0f;
-            if(tile.mov_tile == true && tile.touch == false)
-            {
+            if (tile.mov_tile == true && tile.touch == false) {
                 tile.touch = true;
             }
         }

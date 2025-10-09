@@ -25,15 +25,25 @@ class Tile {
 
         Tile(float x, float y, float w, float h, std::function<Vector2(const Tile&)> updateFn);
 
-        Tile(float x, float y, float w, float h, bool touch, bool mov_tile, bool fall, double time, std::function<Vector2(const Tile&)> updateFn);
+        Tile(float x, float y, float w, float h, bool mov_tile, std::function<Vector2(const Tile&)> updateFn);
+       
         /**
          * Updates the tile's position then its velocity (using `Tile::updateFn`).
          */
         void update();
+
         void drop();
-        const void touch_test() const;
-        const void timer() const;
-        const bool vert_timer(double time_set) const;
-        const void rise_test() const;
+
+        void touch_test() const;
+
+        void timer() const;
+
+        bool vert_timer(double time_set) const;
+
+        void rise_test() const;
+
         void go_up();
 };
+
+static const std::function<Vector2(const Tile&)> STATIONARY_TILE_FN =
+    [](const Tile& _){ return(Vector2){ 0.0f, 0.0f }; };

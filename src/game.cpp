@@ -6,7 +6,7 @@
 #include "fighters/oscar.hpp"
 
 Game::Game()
-    : stage(Stage::stage_one()), fighters(), attacks() {
+    : stage(Stage::test()), fighters(), attacks() {
     fighters.push_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
     fighters.push_back(std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
 }
