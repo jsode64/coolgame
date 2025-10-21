@@ -18,6 +18,15 @@ void Game::update() {
         fighter->update(stage, attacks);
     }
 
+    for(auto& tile : stage.get_bodies()) {
+        tile.touch_test();
+    }
+
+    for(auto& tile : stage.get_bodies()) {
+        tile.rise_test();
+    }
+
+
     // Update attacks and remove finished ones.
     for (size_t i = 0; i < attacks.size();) {
         bool finished = attacks[i].update(fighters);

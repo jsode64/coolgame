@@ -25,32 +25,35 @@ Stage Stage::test() {
         float x = 450.0f + (std::sin(GetTime() * std::numbers::pi * 2.0) * 100.0);
         return (Vector2){ x - tile.body.x, 0.0f };
     }));
+    stage.tiles.push_back(Tile(0, 300, 100, 50, true, [](const Tile& tile){
+         return (Vector2){0.0f, 0.0f};
+    }));
 
     return stage;
 }
 
 // WIP
-Stage Stage::stage_one(){
-    /*Stage stage;
-    stage.tiles.push_back(Tile(100, 100, 80, 20, [](const Tile& _){return (Vector2){0.0f, .20f}}))
+Stage Stage::stage_one() {
+    Stage stage;
+
+    stage.tiles.push_back((Rectangle){ 90, 300, 400, 50});
+
+    stage.tiles.push_back(Tile(500, 300, 100, 50, true, [](const Tile& tile){
+         return (Vector2){0.0f, 0.0f};
+    }));
+
+    stage.tiles.push_back(Tile(0, 300, 100, 50, true, [](const Tile& tile){
+         return (Vector2){0.0f, 0.0f};
+    }));
     
-
+    return stage;
     
-    float center_x = WIN_W / 2;
-    float center_y =  WIN_H / 2;
-    stage.bodies.push_back((Rectangle){ center_x, center_y, 400, 100});
-
-    Rectangle platform= {100, 100, 80, 20};
-    Vector2 platform_vec = {0.0f, 2.0f};
-
-    bool isPlatformPresent = true;
-    const double toggleTime = 3.0;
-    */
 }
 
 const std::vector<Tile>& Stage::get_bodies() const {
     return tiles;
 }
+
 
 void Stage::update() {
     for (auto& tile : tiles) {

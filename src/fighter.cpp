@@ -1,4 +1,5 @@
 #include "fighter.hpp"
+#include "tile.hpp"
 
 #include <algorithm>
 
@@ -135,6 +136,9 @@ void Fighter::handle_collision(const Stage& stage) {
                 y = tile.body.y + tile.body.height;
             }
             v.y = 0.0f;
+            if (tile.mov_tile == true && tile.touch == false) {
+                tile.touch = true;
+            }
         }
     }
 
