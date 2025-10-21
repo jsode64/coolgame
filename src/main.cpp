@@ -1,33 +1,34 @@
 #include <iostream>
 
+#include <variant>
+
 #include "raylib.h"
 
 #include "config.hpp"
 #include "game.hpp"
 
 int main() {
-    // Initialize window.
-    InitWindow(WIN_W, WIN_H, "Cool Game");
-    SetTargetFPS(60);
+  SetTraceLogLevel(LOG_NONE);
+  InitWindow(WIN_W, WIN_H, "Cool Game");
+  SetTargetFPS(60);
 
-    Game game;
+  Game game;
 
-    // Main game loop
-    while (!WindowShouldClose()) {
-        game.update();
+  // Main game loop
+  while (!WindowShouldClose()) {
+    game.update();
 
-        // Render in here:
-        BeginDrawing();
-        ClearBackground(BLUE);
-        DrawFPS(0, 0);
-        
-        game.draw();
+    // Render in here:
+    BeginDrawing();
+    ClearBackground(BLUE);
+    DrawFPS(0, 0);
 
-        EndDrawing();
-        
-    }
+    game.draw();
 
-    CloseAudioDevice(); 
-    
-    CloseWindow();
+    EndDrawing();
+  }
+
+  CloseAudioDevice();
+
+  CloseWindow();
 }

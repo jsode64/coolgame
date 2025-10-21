@@ -1,42 +1,23 @@
 #include "attack.hpp"
 
-#include "raylib.h"
+Attack::Attack(Fighter *src, Vector2 kb, Rectangle body)
+    : src(src), kb(kb), body(body) {}
 
-Attack::Attack(Fighter* src, Rectangle hitbox, Vector2 kb, std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn, std::function<void(const Attack&)> drawFn)
-    : src(src), hitbox(hitbox), kb(kb), ticks(0), updateFn(updateFn), drawFn(drawFn) {
-
-}
-
-void Attack::set_hitbox(Rectangle hitbox_) {
-    hitbox = hitbox_;
-}
-
-uint32_t Attack::get_ticks() const {
-    return ticks;
-}
-
-bool Attack::update(std::vector<std::unique_ptr<Fighter>>& fighters) {
-    bool done = updateFn(*this, fighters);
-    ticks += 1;
-
-    return done;
-}
-
-void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>>& fighters) {
-    for (auto& fighterPtr: fighters) {
-        auto& fighter = *fighterPtr;
-        // Skip source fighter.
-        if (src == &fighter) {
-            continue;
-        }
-
-        // Knock back if collided.
-        if (CheckCollisionRecs(hitbox, fighter.get_body())) {
-            fighter.knock_back(kb);
-        }
+void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters) {
+  for (auto &fighter : fighters) {
+    // Don't hit a fighter with their own attack.
+    if (fighter.get() == src) {
+      continue;
     }
+
+    if (CheckCollisionRecs(body, fighter->get_body())) {
+      on_hit(*fighter);
+    }
+  }
 }
 
-void Attack::draw() const {
-    drawFn(*this);
-}
+void Attack::update(Game &_) {}
+
+void Attack::on_hit(Fighter &f) { f.knock_back(kb); }
+
+void Attack::draw() const {}

@@ -5,45 +5,41 @@
 #include "raylib.h"
 
 class Tile {
-    public:
+public:
+  using UpdateFn = std::function<void(Tile &)>;
 
-        Rectangle body;
-        Vector2 v;
-        std::function<Vector2(const Tile&)> updateFn;
-        mutable bool touch;
-        bool mov_tile;
-        mutable double time;
-        mutable bool fall;
-        float init_y;
-        mutable bool rise;
-    
-    public: 
+public:
+  static constexpr float RISE_FALL_SPEED = 2.0f;
+  inline static const UpdateFn NO_OP = [](Tile &_) {};
 
-        Tile(Rectangle body);
+  Rectangle body;
+  Vector2 v;
 
-        Tile(Rectangle body, std::function<Vector2(const Tile&)> updateFn);
+  UpdateFn updateFn;
 
-        Tile(float x, float y, float w, float h, std::function<Vector2(const Tile&)> updateFn);
+  bool canFall;
+  float stoodOnTime;
+  float time;
+  float home_y;
 
-        Tile(float x, float y, float w, float h, bool mov_tile, std::function<Vector2(const Tile&)> updateFn);
-       
-        /**
-         * Updates the tile's position then its velocity (using `Tile::updateFn`).
-         */
-        void update();
+public:
+  Tile(float x, float y, float w, float h, UpdateFn updateFn = NO_OP);
 
-        void drop();
+  Tile(float x, float y, float w, float h, float time);
 
-        void touch_test() const;
+  /**
+   * Updates the tile's position then its velocity (using `Tile::updateFn`).
+   */
+  void update();
 
-        void timer() const;
+  void stood_on();
 
-        bool vert_timer(double time_set) const;
-
-        void rise_test() const;
-
-        void go_up();
+private:
+  /**
+   * Handles tile falling/rising.
+   */
+  void handle_rise_fall();
 };
 
-static const std::function<Vector2(const Tile&)> STATIONARY_TILE_FN =
-    [](const Tile& _){ return(Vector2){ 0.0f, 0.0f }; };
+static const std::function<Vector2(const Tile &)> STATIONARY_TILE_FN =
+    [](const Tile &_) { return (Vector2){0.0f, 0.0f}; };

@@ -5,48 +5,37 @@
 #include "fighters/luie.hpp"
 #include "fighters/oscar.hpp"
 
-Game::Game()
-    : stage(Stage::test()), fighters(), attacks() {
-    fighters.push_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
-    fighters.push_back(std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
+Game::Game() : stage(Stage::test()), fighters(), attacks() {
+  fighters.emplace_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
+  fighters.emplace_back(
+      std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
 }
 
 void Game::update() {
-    stage.update();
+  stage.update();
+  for (auto &fighter : fighters)
+    fighter->update(*this);
 
-    for (auto& fighter: fighters) {
-        fighter->update(stage, attacks);
-    }
-
-    for(auto& tile : stage.get_bodies()) {
-        tile.touch_test();
-    }
-
-    for(auto& tile : stage.get_bodies()) {
-        tile.rise_test();
-    }
-
-
-    // Update attacks and remove finished ones.
-    for (size_t i = 0; i < attacks.size();) {
-        bool finished = attacks[i].update(fighters);
-        attacks[i].handle_collision(fighters);
-        if (finished) {
-            attacks.erase(attacks.begin() + i);
-        } else {
-            ++i;
-        }
-    }
+  for (auto &attack : attacks) {
+    attack->update(*this);
+    attack->handle_collision(fighters);
+  }
 }
 
 void Game::draw() const {
-    stage.draw();
+  stage.draw();
+  for (const auto &fighter : fighters)
+    fighter->draw();
+  for (const auto &attack : attacks)
+    attack->draw();
+}
 
-    for (const auto& fighter: fighters) {
-        fighter->draw();
-    }
+Stage &Game::get_stage() { return stage; }
 
-    for (const auto& attack : attacks) {
-        attack.draw();
-    }
+std::vector<std::unique_ptr<Fighter>> &Game::get_fighters() { return fighters; }
+
+std::vector<std::unique_ptr<Attack>> &Game::get_attacks() { return attacks; }
+
+void Game::push_attack(std::unique_ptr<Attack> attack) {
+  attacks.push_back(std::move(attack));
 }

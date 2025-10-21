@@ -1,53 +1,61 @@
-// WIP, unused
 #pragma once
 
-#include <stdint.h>
 #include <functional>
+#include <memory>
+#include <vector>
 
 #include "raylib.h"
 
 #include "fighter.hpp"
-#include <memory>
-#include <vector>
+#include "game.hpp"
 
 class Fighter;
+class Game;
 
 class Attack {
-    private:
-        // The fighter the attack came from.
-        Fighter* src;
+protected:
+  // The fighter the attack came from.
+  Fighter *src;
 
-        // Attack collision box.
-        Rectangle hitbox;
+  // The attack's current knockback.
+  Vector2 kb;
 
-        // Attack knockback.
-        Vector2 kb;
+  // The attack's current body.
+  Rectangle body;
 
-        // The number of ticks the attack has been alive for.
-        uint32_t ticks;
+public:
+  virtual ~Attack() = default;
 
-        // Attack update
-        std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn;
+  // TODO: `.is_done` to delete finished attacks.
 
-        // Draw callback.
-        std::function<void(const Attack&)> drawFn;
+  /**
+   * Checks for and handles collision between the fighters.
+   */
+  void handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters);
 
-    public:
+  /**
+   * The attack's update function.
+   *
+   * By default, this function does nothing.
+   */
+  virtual void update(Game &game);
 
-        Attack(Fighter* src, Rectangle hitbox, Vector2 kb, std::function<bool(Attack&, std::vector<std::unique_ptr<Fighter>>&)> updateFn, std::function<void(const Attack&)> drawFn);
+  /**
+   * The attack's draw/render function.
+   *
+   * By default this function does nothing and renders norhing.
+   */
+  virtual void draw() const;
 
-        // Sets the attack's hitbox.
-        void set_hitbox(Rectangle hitbox);
+protected:
+  Attack(Fighter *src, Vector2 kb, Rectangle body);
 
-        // Returns the attack's tick lifetime.
-        uint32_t get_ticks() const;
-
-        // Updates the attack. Returns true if the attack is finished and should be removed.
-        bool update(std::vector<std::unique_ptr<Fighter>>& fighters);
-
-        // Draws the attack.
-        void draw() const;
-
-        // Checks for collision with the given fighters and knocks them back.
-        void handle_collision(std::vector<std::unique_ptr<Fighter>>& fighters);
+  /**
+   * The attack's on-hit callback.
+   *
+   * By default, this function just knocks the hit fighter back.
+   *
+   * @param p The fighter that was hit
+   */
+  virtual void on_hit(Fighter &p);
 };
