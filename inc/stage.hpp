@@ -15,6 +15,9 @@ class Stage {
         /// @brief The stage's color.
         Color color;
 
+        int stageWidth;
+        int stageHeight;
+
     public:
         Stage();
 
@@ -30,4 +33,10 @@ class Stage {
 
         /// @brief Draws the stage.
         void draw() const;
+
+        /// @brief Returns Stage Blastzone Width
+        int getStageWidth() const;
+
+        /// @brief Returns Stage Blastzone Height
+        int getStageHeight() const;
 };

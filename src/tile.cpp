@@ -32,7 +32,7 @@ Tile::Tile(float x, float y, float w, float h, bool mov_tile, std::function<Vect
 
 // Lowers the tile out of bounds after it was touched.
 void Tile::drop() {
-    if (fall == true && body.y < WIN_H + 100) {
+    if (fall == true && body.y < GetScreenHeight() + 100) {
         v.y = 10.0f;
         body.y += v.y;
     }
@@ -55,7 +55,7 @@ void Tile::timer() const {
 
 //tests to see if go_up() should be called.
 void Tile::rise_test() const {
-    if( fall == true && body.y >= WIN_H + 100)
+    if( fall == true && body.y >= GetScreenHeight() + 100)
     {
         timer();
        if(vert_timer(time)){

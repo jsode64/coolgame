@@ -71,10 +71,13 @@ void Fighter::handle_movement() {
     v.y = std::min(v.y, 2.0f * maxSpeedH);
 }
 
-void Fighter::handle_oob() {
+void Fighter::handle_oob(const Stage& stage) {
+    int stageHeight = stage.getStageHeight();
+    int stageWidth = stage.getStageWidth();
+
     bool oob = body.x <= -body.width
-        || body.x >= WIN_W
-        || body.y >= WIN_H;
+        || body.x >= stageWidth
+        || body.y >= stageHeight;
     
     if (oob) {
         respawn();

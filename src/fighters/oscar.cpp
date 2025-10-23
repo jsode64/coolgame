@@ -7,7 +7,7 @@ Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackK
 
 void Oscar::update(const Stage& stage, std::vector<Attack>& attacks) {
     handle_movement();
-    handle_oob();
+    handle_oob(stage);
     handle_collision(stage);
     handle_attacks(attacks);
 }

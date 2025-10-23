@@ -91,7 +91,7 @@ class Fighter {
         /**
          * Handles player being OOB (out of bounds).
          */
-        void handle_oob();
+        void handle_oob(const Stage& stage);
 
         /**
          * Handles player collision.
