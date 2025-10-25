@@ -2,103 +2,66 @@
 #include "config.hpp"
 #include "raylib.h"
 
-Tile::Tile(Rectangle body)
-    : body(body), v({ 0.0f, 0.0f }), init_y(body.y), updateFn(STATIONARY_TILE_FN) {
-    fall = false;
-    rise = false;
-    mov_tile = false;
-}
+Tile::Tile(float x, float y, float w, float h, UpdateFn updateFn)
+    : body(x, y, w, h), v(0.0f, 0.0f), updateFn(updateFn), canFall(false),
+      stoodOnTime(-1.0f), time(0.0f), home_y(y) {}
 
-Tile::Tile(Rectangle body, std::function<Vector2(const Tile&)> updateFn)
-    : body(body), v({ 0.0f, 0.0f }), init_y(body.y), updateFn(updateFn) {
-    fall = false;
-    rise = false;
-    mov_tile = false;
-}
-
-Tile::Tile(float x, float y, float w, float h, std::function<Vector2(const Tile&)> updateFn)
-    : body({ x, y, w, h }), v({ 0.0f, 0.0f }), init_y(body.y), updateFn(updateFn) {
-    fall = false;
-    rise = false;
-    mov_tile = false;
-}
-
-Tile::Tile(float x, float y, float w, float h, bool mov_tile, std::function<Vector2(const Tile&)> updateFn) 
-    : body({x, y, w, h}), v({0.0f, 0.0f}), touch(false), mov_tile(mov_tile), init_y(y), updateFn(updateFn) {
-    time = 0.0;
-    fall = false;
-    rise = false;
-}
-
-// Lowers the tile out of bounds after it was touched.
-void Tile::drop() {
-    if (fall == true && body.y < GetScreenHeight() + 100) {
-        v.y = 10.0f;
-        body.y += v.y;
-    }
-}
-
-// Raises tile back to original position after it was lowered.
-void Tile::go_up(){
-    if (rise == true && body.y > init_y) {
-        v.y = 10.0f;
-        body.y -= v.y;
-    }
-}
-
-//creates timer for raising/dropping tiles.
-void Tile::timer() const {
-
-    time = GetTime();
-
-}
-
-//tests to see if go_up() should be called.
-void Tile::rise_test() const {
-    if( fall == true && body.y >= GetScreenHeight() + 100)
-    {
-        timer();
-       if(vert_timer(time)){
-        fall = false;
-        rise = true;
-       }
-    }
-}
-
-//checks to see if specified time has elapsed after tile was touched.
-bool Tile::vert_timer(double time_set) const {
-    double elapsed = GetTime();
-    if (elapsed - time_set > 1.0)
-    {
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-//Checks to see if tile was touched by players.
-void Tile::touch_test() const {
-    if(mov_tile == true && touch == true && time == 0.0){
-        timer();
-    }
-
-    else if (mov_tile == true && touch == true && time != 0.0) {
-        if(vert_timer(time)) {
-            fall = true;
-            touch = false;
-        }
-    }
-}
+Tile::Tile(float x, float y, float w, float h, float time)
+    : body(x, y, w, h), v(0.0f, 0.0f), updateFn(NO_OP), canFall(true),
+      stoodOnTime(-1.0f), time(time), home_y(y) {}
 
 void Tile::update() {
-    // Update velocity.
-    v = updateFn(*this);
+  // Update tile.
+  updateFn(*this);
 
-    // Update position.
-    body.x += v.x;
-    body.y += v.y;
+  if (canFall) {
+    // If fallen below the screen, start moving up.
+    if (body.y > WIN_H) {
+      v.y = -RISE_FALL_SPEED;
+    } else if (stoodOnTime > 0.0f && float(GetTime()) - stoodOnTime > time &&
+               v.y >= 0.0f) {
+      v.y = RISE_FALL_SPEED;
+    }
 
-    drop();
-    go_up();
+    // Don't let rise beyond home.
+    if (body.y < home_y) {
+      body.y = home_y;
+      v.y = 0.0f;
+      stoodOnTime = -1.0f;
+    }
+  }
+
+  // Update position.
+  body.x += v.x;
+  body.y += v.y;
+}
+
+void Tile::stood_on() {
+  if (canFall && stoodOnTime < 0.0f) {
+    stoodOnTime = float(GetTime());
+  }
+}
+
+void Tile::handle_rise_fall() {
+  // Only continue if the tile has falling active.
+  if (!canFall) {
+    return;
+  }
+
+  // Begin rising when reaching the bottom of the screen.
+  if (body.y > WIN_H) {
+    v.y = -RISE_FALL_SPEED;
+    stoodOnTime = -1.0f;
+  }
+
+  // Fall if enough time has passed since stepped on.
+  if (stoodOnTime > 0.0f && float(GetTime()) - stoodOnTime > time) {
+    v.y = RISE_FALL_SPEED;
+  }
+
+  // Don't let rise beyond home.
+  if (body.y < home_y) {
+    body.y = home_y;
+    v.y = 0.0f;
+  }
 }

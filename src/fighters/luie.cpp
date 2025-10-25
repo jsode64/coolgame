@@ -1,40 +1,34 @@
 #include "fighters/luie.hpp"
+#include "attack.hpp"
 
-Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey)
-    : Fighter(Rectangle({ 0.0f, 0.0f, 10.0f, 30.0f }), 15.0f, ACCELERATION, DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
-    respawn();
+class LuieGroundAttack : public Attack {
+public:
+  LuieGroundAttack(Fighter *src)
+      : Attack(src, Vector2(0.0f, -0.5f), src->get_body()) {}
+
+protected:
+  void update(Game &_) override { body = src->get_body(); }
+};
+
+class LuieAirAttack : public Attack {
+public:
+  LuieAirAttack(Fighter *src)
+      : Attack(src, Vector2(0.0f, -0.5f), src->get_body()) {}
+};
+
+Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
+           int32_t attackKey)
+    : Fighter(Rectangle(0.0f, 0.0f, 10.0f, 30.0f), 15.0f, ACCELERATION,
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
+  respawn();
 }
 
-void Luie::update(const Stage& stage, std::vector<Attack>& attacks) {
-    handle_movement();
-    handle_oob(stage);
-    handle_collision(stage);
-    handle_attacks(attacks);
+void Luie::draw() const { DrawRectangleRec(body, GREEN); }
+
+std::unique_ptr<Attack> Luie::ground_attack() {
+  return std::make_unique<LuieGroundAttack>(this);
 }
 
-void Luie::draw() const {
-    DrawRectangleRec(body, GREEN);
-}
-
-Attack Luie::ground_attack() {
-    return Attack(this, body, Vector2(0.0f, -5.0f),
-        [this](Attack& atk, std::vector<std::unique_ptr<Fighter>>& fighters) {
-            atk.set_hitbox(body);
-            return atk.get_ticks() > 60;
-        },
-        [](const Attack& atk){
-
-        }
-    );
-}
-
-Attack Luie::air_attack() {
-    return Attack(this, body, Vector2(0.0f, -5.0f),
-        [this](Attack& atk, std::vector<std::unique_ptr<Fighter>>& fighters) {
-            return true;
-        },
-        [](const Attack& atk){
-
-        }
-    );
+std::unique_ptr<Attack> Luie::air_attack() {
+  return std::make_unique<LuieAirAttack>(this);
 }

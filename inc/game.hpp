@@ -1,27 +1,53 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "attack.hpp"
 #include "fighter.hpp"
 #include "stage.hpp"
 
+class Attack;
+class Fighter;
+
 class Game {
-    private:
+private:
+  Stage stage;
+  std::vector<std::unique_ptr<Fighter>> fighters;
+  std::vector<std::unique_ptr<Attack>> attacks;
 
-        Stage stage;
+public:
+  Game();
 
-    std::vector<std::unique_ptr<Fighter>> fighters;
-        std::vector<Attack> attacks;
+  /**
+   * Updates the game state.
+   */
+  void update();
 
+  /**
+   * Draws the game.
+   */
+  void draw() const;
 
-    public:
+  /**
+   * Returns the game's stage.
+   */
+  Stage &get_stage();
 
-        Game();
+  /**
+   * Returns the game's fighters.
+   */
+  std::vector<std::unique_ptr<Fighter>> &get_fighters();
 
-        void update();
+  /**
+   * Returns the game's attacks.
+   */
+  std::vector<std::unique_ptr<Attack>> &get_attacks();
 
-        void draw() const;
-
+  /**
+   * Pushes the attack to the game state.
+   *
+   * @param attack The attack to be pushed
+   */
+  void push_attack(std::unique_ptr<Attack> atk);
 };

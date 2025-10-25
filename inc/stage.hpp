@@ -7,36 +7,27 @@
 #include <vector>
 
 class Stage {
-    private:
+private:
+  /// @brief A collection of the stage's bodies.
+  std::vector<Tile> tiles;
 
-        /// @brief A collection of the stage's bodies.
-        std::vector<Tile> tiles;
+  /// @brief The stage's color.
+  Color color;
 
-        /// @brief The stage's color.
-        Color color;
+public:
+  Stage();
 
-        int stageWidth;
-        int stageHeight;
+  /// @return Returns the test stage.
+  static Stage test();
+  static Stage stage_one();
 
-    public:
-        Stage();
+  /// @return If any body collides with one of the stage's, returns `true` and
+  /// itself.
+  std::vector<Tile> &get_bodies();
 
-        /// @return Returns the test stage.
-        static Stage test();
-        static Stage stage_one();
+  /// @brief Updates the stage's tiles.
+  void update();
 
-        /// @return If any body collides with one of the stage's, returns `true` and itself.
-        const std::vector<Tile>& get_bodies() const;
-
-        /// @brief Updates the stage's tiles.
-        void update();
-
-        /// @brief Draws the stage.
-        void draw() const;
-
-        /// @brief Returns Stage Blastzone Width
-        int getStageWidth() const;
-
-        /// @brief Returns Stage Blastzone Height
-        int getStageHeight() const;
+  /// @brief Draws the stage.
+  void draw() const;
 };
