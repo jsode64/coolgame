@@ -20,7 +20,6 @@ Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey)
     : Fighter(Rectangle(0.0f, 0.0f, 10.0f, 30.0f), 15.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
-  respawn();
 }
 
 void Luie::draw() const { DrawRectangleRec(body, GREEN); }

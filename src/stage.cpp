@@ -6,10 +6,12 @@
 #include <cmath>
 #include <numbers>
 
-Stage::Stage() : tiles(), color(BLACK) {}
+Stage::Stage() : tiles(), color(BLACK), stageWidth(WIN_W), stageHeight(WIN_H) {}
 
 Stage Stage::test() {
   Stage stage;
+
+  
 
   // Give bodies.
   stage.tiles.push_back(Tile(200, 400, 600, 50));

@@ -39,7 +39,7 @@ public:
   /**
    * Respawns the fighter.
    */
-  void respawn();
+  void respawn(Stage &stage);
 
   /**
    * Returns the fighter's body.
@@ -86,8 +86,9 @@ protected:
 
   /**
    * Handles player being OOB (out of bounds).
+   * @param stage The stage blastzone size
    */
-  void handle_oob();
+  void handle_oob(Stage &stage);
 
   /**
    * Handles player collision.

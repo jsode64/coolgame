@@ -14,6 +14,13 @@ private:
   /// @brief The stage's color.
   Color color;
 
+  /// @brief The stage's width.
+  int stageWidth;
+
+  /// @brief The stage's height.
+  int stageHeight;
+
+
 public:
   Stage();
 
@@ -30,4 +37,10 @@ public:
 
   /// @brief Draws the stage.
   void draw() const;
+
+  /// @brief Return the stage width.
+  int getStageWidth() const;
+
+  /// @brief Return the stage height.
+  int getStageHeight() const;
 };

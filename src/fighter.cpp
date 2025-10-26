@@ -18,9 +18,9 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
       maxSpeedH(maxSpeedH), ground(std::nullopt), leftKey(leftKey),
       rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey) {}
 
-void Fighter::respawn() {
-  body.x = (float(WIN_W) - body.width) / 2.0;
-  body.y = (float(WIN_H) - body.height) / 2.0;
+void Fighter::respawn(Stage &stage) {
+  body.x = (float(stage.getStageWidth()) - body.width) / 2.0;
+  body.y = (float(stage.getStageHeight()) - body.height) / 2.0;
 
   v = Vector2(0.0f, 0.0f);
 
@@ -38,7 +38,7 @@ void Fighter::knock_back(Vector2 kb) {
 
 void Fighter::update(Game &game) {
   handle_movement();
-  handle_oob();
+  handle_oob(game.get_stage());
   handle_collision(game.get_stage());
   handle_attacks(game.get_attacks());
 }
@@ -76,11 +76,11 @@ void Fighter::handle_movement() {
   v.y = std::min(v.y, 2.0f * maxSpeedH);
 }
 
-void Fighter::handle_oob() {
-  bool oob = body.x <= -body.width || body.x >= WIN_W || body.y >= WIN_H;
+void Fighter::handle_oob(Stage &stage) {
+  bool oob = body.x <= -body.width || body.x >= stage.getStageWidth() || body.y >= stage.getStageHeight();
 
   if (oob) {
-    respawn();
+    respawn(stage);
   }
 }
 
