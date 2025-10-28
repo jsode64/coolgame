@@ -6,60 +6,42 @@
 #include <cmath>
 #include <numbers>
 
-Stage::Stage() : tiles(), color(BLACK) {
-
-}
+Stage::Stage() : tiles(), color(BLACK) {}
 
 Stage Stage::test() {
-    Stage stage;
+  Stage stage;
 
-    // Give bodies.
-    stage.tiles.push_back(Tile((Rectangle){ 200, 400, 600, 50 }));
-    stage.tiles.push_back((Rectangle){ 100, 300, 100, 150 });
-    stage.tiles.push_back((Rectangle){ 600, 300, 200, 50 });
-    stage.tiles.push_back(Tile(300, 100, 200, 50, [](const Tile& tile){
-        float x = 300.0f + (std::sin(GetTime() * std::numbers::pi * 2.0) * 300.0);
-        return (Vector2){ x - tile.body.x, 0.0f };
-    }));
-    stage.tiles.push_back(Tile(600, 350, 50, 50, [](const Tile& tile){
-        float x = 450.0f + (std::sin(GetTime() * std::numbers::pi * 2.0) * 100.0);
-        return (Vector2){ x - tile.body.x, 0.0f };
-    }));
+  stage.tiles.push_back(Tile(200.f, 400.f, 600.f, 50.f));
+  stage.tiles.push_back(Tile(100.f, 300.f, 100.f, 150.f));
+  stage.tiles.push_back(Tile(600.f, 300.f, 200.f, 50.f));
+  stage.tiles.push_back(Tile(0.f, 300.f, 100.f, 50.f, 1.f));
 
-    return stage;
+  return stage;
 }
 
 // WIP
-Stage Stage::stage_one(){
-    /*Stage stage;
-    stage.tiles.push_back(Tile(100, 100, 80, 20, [](const Tile& _){return (Vector2){0.0f, .20f}}))
-    
+Stage Stage::stage_one() {
+  Stage stage;
 
-    
-    float center_x = WIN_W / 2;
-    float center_y =  WIN_H / 2;
-    stage.bodies.push_back((Rectangle){ center_x, center_y, 400, 100});
+  stage.tiles.push_back(Tile(90, 300, 400, 50));
 
-    Rectangle platform= {100, 100, 80, 20};
-    Vector2 platform_vec = {0.0f, 2.0f};
+  stage.tiles.push_back(Tile(500, 300, 100, 50, 1.0f));
 
-    bool isPlatformPresent = true;
-    const double toggleTime = 3.0;
-    */
+  stage.tiles.push_back(Tile(0, 300, 100, 50, 1.0f));
+
+  return stage;
 }
 
-const std::vector<Tile>& Stage::get_bodies() const {
-    return tiles;
-}
+std::vector<Tile> &Stage::get_tiles() { return tiles; }
 
 void Stage::update() {
-    for (auto& tile : tiles) {
-        tile.update();
-    }
+  for (auto &tile : tiles) {
+    tile.update();
+  }
 }
 
 void Stage::draw() const {
-    for (const auto& tile : tiles) {
-        DrawRectangleRec(tile.body, color);
-    }
+  for (const auto &tile : tiles) {
+    DrawRectangleRec(tile.body, color);
+  }
 }

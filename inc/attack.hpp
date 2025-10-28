@@ -1,55 +1,81 @@
-// WIP, unused
 #pragma once
 
-#include <stdint.h>
+#include <functional>
+#include <memory>
+#include <vector>
 
 #include "raylib.h"
 
-#include "player.hpp"
+#include "fighter.hpp"
+#include "game.hpp"
+
+class Fighter;
+class Game;
 
 class Attack {
-    private:
+protected:
+  // The fighter the attack came from.
+  Fighter *src;
 
-        Rectangle hitbox;
-        Rectangle hurtbox;
-        Vector2 v1;
-        Vector2 v2;
-        Color color1;
-        Color color2;
+  // The attack's current knockback.
+  Vector2 kb;
 
-        bool attackHit;
+  // The attack's current damage.
+  float dmg;
 
-        int32_t attackKey;
+  // The attack's current body.
+  Rectangle body;
 
-    public:
+public:
+  virtual ~Attack() = default;
 
-        Attack(Color color1, Color color2, int32_t attackKey);
+  /**
+   * Checks for and handles collision between the fighters.
+   */
+  void handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters);
 
-        static constexpr float W = 10.0;
+  /**
+   * The attack's damage value.
+   *
+   * @return The attack's damage
+   */
+  float get_dmg() const;
 
-        static constexpr float H = 10.0;
+  /**
+   * The attack's knockback value.
+   *
+   * @return The attack's knockback
+   */
+  Vector2 get_kb() const;
 
-        static constexpr float KB = 1000.0;
+  /**
+   * The attack's update function.
+   *
+   * By default, this function does nothing.
+   */
+  virtual void update(Game &game);
 
-        /**
-         * Updates the player.
-         * 
-         * @param player 
-         */
-        void update(const Player& p);
+  /**
+   * The attack's draw/render function.
+   *
+   * By default this function does nothing and renders norhing.
+   */
+  virtual void draw() const;
 
-    private:
+  /**
+   * The attack's on-hit callback.
+   *
+   * By default, this function just knocks the hit fighter back.
+   *
+   * @param p The fighter that was hit
+   */
+  virtual void on_hit(Fighter &p);
 
-        // Checks collision with hurtbox.
-        void collideWithHurtbox(const Rectangle& hurtbox);
+  /**
+   * Returns `true` if the attack is finished and should be deleted.
+   */
+  virtual bool is_done() const;
 
-        void moveWithPlayer(const Player& p);
-
-        // Draws attack hitbox and hurtbox.
-        void draw();
-
-        void checkAttackKey(const Player& p);
-
-
-
+protected:
+  Attack(Fighter *src, Vector2 kb, float damage, Rectangle body);
 };

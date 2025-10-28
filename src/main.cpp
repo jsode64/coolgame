@@ -2,50 +2,36 @@
 
 #include "raylib.h"
 
+#include "assets.hpp"
 #include "config.hpp"
-#include "player.hpp"
-#include "stage.hpp"
-#include "attack.hpp"
-#include "fighters/oscar.hpp"
-#include "fighters/luie.hpp"
+#include "game.hpp"
 
 int main() {
-    // Initialize window.
-    InitWindow(WIN_W, WIN_H, "Cool Game");
-    SetTargetFPS(60);
+  SetTraceLogLevel(LOG_NONE);
+  InitWindow(WIN_W, WIN_H, "Cool Game");
+  SetTargetFPS(60);
 
-    //Image Loading
-    Texture2D playerImg = LoadTexture("assets/placeholderman.png");
+  if (!Assets::load()) {
+    std::printf("Failed to load assets!\n");
+  }
 
-    //Player p(RED, KEY_A, KEY_D, KEY_SPACE, 0);
-    Luie d(KEY_A, KEY_D, KEY_W);
-    Oscar p(KEY_LEFT, KEY_RIGHT, KEY_UP);
+  Game game;
 
-    Attack jab(GREEN, BLUE, KEY_F);
+  // Main game loop
+  while (!WindowShouldClose()) {
+    game.update();
 
-    Stage stage = Stage::test();
+    // Render in here:
+    BeginDrawing();
+    ClearBackground(BLUE);
+    DrawFPS(0, 0);
 
-    // Main game loop
-    while (!WindowShouldClose()) {
-        stage.update();
-        p.update(stage);
-        d.update(stage);
-        //jab.update(p);
+    game.draw();
 
-        // Render in here:
-        BeginDrawing();
-        ClearBackground(BLUE);
-        DrawFPS(0, 0);
-        
-        p.draw();
-        d.draw();
-        stage.draw();
+    EndDrawing();
+  }
 
-        EndDrawing();
-    }
+  CloseAudioDevice();
 
-    //Unload Images
-    UnloadTexture(playerImg);
-    
-    CloseWindow();
+  CloseWindow();
 }

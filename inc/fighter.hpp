@@ -1,70 +1,148 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <optional>
+#include <vector>
 
 #include "raylib.h"
 
-#include "stage.hpp"
-#include "tile.hpp"
+class Attack;
+class Game;
+class Tile;
+class Stage;
+
+enum class Dir {
+  LEFT,
+  RIGHT,
+};
 
 class Fighter {
-    protected:
+protected:
+  Rectangle body;
+  Vector2 v;
 
-        Rectangle body;
-        Vector2 v;
+  float jumpSpeed;
+  float acceleration;
+  float decceleration;
+  float maxSpeedH;
+  Dir dir;
 
-        float jumpSpeed;
-        std::optional<const Tile*> ground;
+  float percentage;
+  int32_t iFrames;
 
-        int32_t leftKey;
-        int32_t rightKey;
-        int32_t jumpKey;
+  std::optional<const Tile *> ground;
 
-    public:
-    
-        Fighter(Rectangle body, float jumpSpeed, int32_t leftKey, int32_t rightKey, int32_t jumpKey);
+  int32_t leftKey;
+  int32_t rightKey;
+  int32_t jumpKey;
+  int32_t attackKey;
 
-        /**
-         * Respawns the player.
-         */
-        void respawn();
+public:
+  Fighter(Rectangle body, float jumpSpeed, float acceleration,
+          float decceleration, float maxSpeedH, int32_t leftKey,
+          int32_t rightKey, int32_t jumpKey, int32_t attackKey);
 
-        /**
-         * Returns the player's body.
-         */
-        Rectangle get_body() const;
+  virtual ~Fighter() = default;
 
-        /**
-         * Updates the player.
-         */
-        virtual void update(const Stage& stage) = 0;
+  /**
+   * Respawns the fighter.
+   */
+  void respawn();
 
-        /**
-         * Draws the player.
-         */
-        virtual void draw() const = 0;
+  /**
+   * Returns the fighter's direction.
+   */
+  Dir get_dir() const;
 
-    protected:
+  /**
+   * Returns the fighter's body.
+   */
+  Rectangle get_body() const;
 
-        /**
-         * Handles fighter movement via user input.
-         * 
-         * @param a Acceleration.
-         * @param d Decceleration.
-         * @param m Max horizontal speed.
-         */
-        void handle_movement(float a, float d, float m);
+  /**
+   * Returns true if the fighter is on the ground, false if not.
+   */
+  bool on_ground() const;
 
-        /**
-         * Handles player being OOB (out of bounds).
-         */
-        void handle_oob();
+  /**
+   * Hits the player with the given attack.
+   *
+   * If the player has invincibility frames, does nothing.
+   */
+  void hit(Attack &attack);
 
-        /**
-         * Handles player collision.
-         * 
-         * @param stage The stage to collide with.
-         */
-        void handle_collision(const Stage& stage);
+  /**
+   * The default update function for the fighter.
+   *
+   * Handles input, movement, and collision.
+   *
+   * @param game The game state to be used
+   */
+  void default_update(Game &game);
+
+  /**
+   * Updates the fighter.
+   *
+   * By default calls `Fighter::default_update`, which should be called anway.
+   *
+   * @param game The game state to be used
+   */
+  virtual void update(Game &game);
+
+  /**
+   * Draws the fighter.
+   */
+  virtual void draw() const = 0;
+
+  /**
+   * Returns `true` if a ground attack can be used.
+   *
+   * By default, returns `true` always.
+   *
+   * @return Is `true` if can attack, `false` if not.
+   */
+  virtual bool can_ground_attack() const;
+
+  /**
+   * Returns `true` if an air attack can be used.
+   *
+   * By default, returns `true` always.
+   *
+   * @return Is `true` if can attack, `false` if not.
+   */
+  virtual bool can_air_attack() const;
+
+  /**
+   * Returns a new ground attack.
+   */
+  virtual std::unique_ptr<Attack> ground_attack() = 0;
+
+  /**
+   * Returns a new air attack.
+   */
+  virtual std::unique_ptr<Attack> air_attack() = 0;
+
+protected:
+  /**
+   * Handles fighter movement via user input.
+   */
+  void handle_movement();
+
+  /**
+   * Handles player being OOB (out of bounds).
+   */
+  void handle_oob();
+
+  /**
+   * Handles player collision.
+   *
+   * @param stage The stage to collide with
+   */
+  void handle_collision(Stage &stage);
+
+  /**
+   * Handles the fighter using an attack.
+   */
+  void handle_attacks(std::vector<std::unique_ptr<Attack>> &attacks);
 };

@@ -3,19 +3,25 @@
 #include "../fighter.hpp"
 
 class Oscar : public Fighter {
-    public:
+public:
+private:
+  static constexpr float ACCELERATION = 0.5;
+  static constexpr float DECCELERATION = ACCELERATION / 2.0;
+  static constexpr float MAX_SPEED = 5.0;
 
-    private:
+  int32_t groundCd;
+  int32_t airCd;
 
-        static constexpr float ACCELERATION = 0.5;
-        static constexpr float DECCELERATION = ACCELERATION / 2.0;
-        static constexpr float MAX_SPEED = 5.0;
+public:
+  Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
 
-    public:
+  bool can_ground_attack() const override;
 
-        Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey);
+  std::unique_ptr<Attack> ground_attack() override;
 
-        void update(const Stage& stage) override;
+  std::unique_ptr<Attack> air_attack() override;
 
-        void draw() const override;
+  void update(Game &game) override;
+
+  void draw() const override;
 };

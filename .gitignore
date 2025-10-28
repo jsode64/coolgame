@@ -1,9 +1,5 @@
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-
 build
 run.sh
+fmt.sh
 
 .vscode
