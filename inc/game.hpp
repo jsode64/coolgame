@@ -6,6 +6,7 @@
 #include "attack.hpp"
 #include "fighter.hpp"
 #include "stage.hpp"
+#include "gamepad.hpp"
 
 class Attack;
 class Fighter;
@@ -15,6 +16,7 @@ private:
   Stage stage;
   std::vector<std::unique_ptr<Fighter>> fighters;
   std::vector<std::unique_ptr<Attack>> attacks;
+  Gamepad input1;
 
 public:
   Game();

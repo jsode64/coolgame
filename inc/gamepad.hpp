@@ -8,7 +8,7 @@ class Gamepad {
 
 private:
     int controller = 0;
-    std::string id;
+    const char* id;
 
     const float leftStickDeadzoneX = 0.1f;
     const float leftStickDeadzoneY = 0.1f;
@@ -21,6 +21,8 @@ public:
     Gamepad();
 
     bool gamepad_check();
+
+    void id_display() const;
 
     void update();
 

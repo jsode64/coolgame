@@ -19,6 +19,7 @@
 
 #include "config.hpp"
 #include "game.hpp"
+#include "gamepad.hpp"
 
 
 int32_t screenW;

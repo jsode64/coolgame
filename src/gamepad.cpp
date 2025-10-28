@@ -15,6 +15,16 @@ void Gamepad::id_check(){
     id = GetGamepadName(controller); 
 }
 
-void Gamepad::update() {
-
+void Gamepad::id_display() const{
+    DrawText(id, 190, 200, 20, RED);
 }
+
+void Gamepad::update() {
+    if (gamepad_check()) {
+        id_check();
+    }
+    else {
+        id = "Controller not found!!";
+    }
+}
+

@@ -12,6 +12,7 @@ Game::Game() : stage(Stage::test()), fighters(), attacks() {
 
 void Game::update() {
   stage.update();
+  input1.update();
   for (auto &fighter : fighters)
     fighter->update(*this);
 
@@ -23,6 +24,7 @@ void Game::update() {
 
 void Game::draw() const {
   stage.draw();
+  input1.id_display();
   for (const auto &fighter : fighters)
     fighter->draw();
   for (const auto &attack : attacks)
@@ -38,5 +40,3 @@ std::vector<std::unique_ptr<Attack>> &Game::get_attacks() { return attacks; }
 void Game::push_attack(std::unique_ptr<Attack> attack) {
   attacks.push_back(std::move(attack));
 }
-
-
