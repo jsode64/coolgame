@@ -1,15 +1,15 @@
-#include "fighters/oscar.hpp"
+#include "fighters/slug.hpp"
 
 #include "assets.hpp"
 #include "attack.hpp"
 
-class OscarGroundAttack : public Attack {
+class SlugGroundAttack : public Attack {
 private:
   float vx;
   bool done;
 
 public:
-  OscarGroundAttack(Fighter *src)
+  SlugGroundAttack(Fighter *src)
       : Attack(src, Vector2(0.f, -5.f), 1.f, src->get_body()), done(false) {
     vx = src->get_dir() == Dir::LEFT ? -1.f : 1.f;
   }
@@ -31,50 +31,49 @@ public:
   bool is_done() const override { return done; }
 };
 
-class OscarAirAttack : public Attack {
+class SlugAirAttack : public Attack {
 public:
-  OscarAirAttack(Fighter *src)
+  SlugAirAttack(Fighter *src)
       : Attack(src, Vector2(0.0f, -0.5f), 10.0f, src->get_body()) {}
 
   bool is_done() const override { return true; }
 };
 
-Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
+Slug::Slug(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
              int32_t attackKey)
     : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 10.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
   respawn();
 }
 
-void Oscar::update(Game &game) {
+void Slug::update(Game &game) {
   groundCd--;
   airCd--;
 
   default_update(game);
 }
 
-void Oscar::draw() const {
+void Slug::draw() const {
   if (action == Action::WALK) {
-    float x = 32.f * float((aFrames % 48) / 6);
-    DrawTexturePro(
-        Assets::OSCAR_WALK,
-        Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
-        Vector2(0.f, 0.f), 0.f, RED);
+
+    DrawRectangleRec(body, BROWN);
   } else {
+    auto tick = (aFrames % 60) / 15;
+    float x = tick == 3 ? 32.f : float(tick * 32);
     DrawTexturePro(
-        Assets::OSCAR_WALK,
-        Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), body,
-        Vector2(0.f, 0.f), 0.f, BLUE);
+        Assets::SLUG_IDLE,
+        Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
+        Vector2(0.f, 0.f), 0.f, BROWN);
   }
 }
 
-bool Oscar::can_ground_attack() const { return groundCd < 1; }
+bool Slug::can_ground_attack() const { return groundCd < 1; }
 
-std::unique_ptr<Attack> Oscar::ground_attack() {
+std::unique_ptr<Attack> Slug::ground_attack() {
   groundCd = 60;
-  return std::make_unique<OscarGroundAttack>(this);
+  return std::make_unique<SlugGroundAttack>(this);
 }
 
-std::unique_ptr<Attack> Oscar::air_attack() {
-  return std::make_unique<OscarAirAttack>(this);
+std::unique_ptr<Attack> Slug::air_attack() {
+  return std::make_unique<SlugAirAttack>(this);
 }

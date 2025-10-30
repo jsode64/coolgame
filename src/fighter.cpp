@@ -17,6 +17,9 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
   v = Vector2(0.0f, 0.0f);
   dir = Dir::RIGHT;
 
+  action = Action::IDLE;
+  aFrames = 0;
+
   percentage = 0.f;
   iFrames = 0;
 
@@ -55,12 +58,21 @@ void Fighter::hit(Attack &attack) {
   iFrames = 15;
 }
 
+void Fighter::set_action(Action _action) {
+  if (_action != action) {
+    action = _action;
+    aFrames = 0;
+  }
+}
+
 void Fighter::default_update(Game &game) {
   handle_movement();
   handle_oob();
   handle_collision(game.get_stage());
   handle_attacks(game.get_attacks());
+
   iFrames--;
+  aFrames++;
 }
 
 void Fighter::update(Game &game) { default_update(game); }
@@ -85,19 +97,21 @@ void Fighter::handle_movement() {
     dir = Dir::RIGHT;
   }
 
+  if (left != right) {
+    set_action(Action::WALK);
+  } else if (std::abs(v.x) <= decceleration) {
+      v.x = 0.f;
+      set_action(Action::IDLE);
+  } else {
+      v.x -= std::copysign(decceleration, v.x);
+  }
+
   // Vertical movement.
   if (IsKeyDown(jumpKey) && ground.has_value()) {
     v.y = -jumpSpeed;
     v.x += ground.value()->v.x;
   } else {
     v.y += GRAVITY;
-  }
-
-  // Deccelerate if neutral input or moving against current direction.
-  if (!hMove || (left && v.x > 0.0f) || (right && v.x < 0.0f)) {
-    v.x = (std::abs(v.x) <= decceleration)
-              ? 0.0f
-              : v.x - std::copysign(decceleration, v.x);
   }
 
   // Limit player speed.

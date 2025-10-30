@@ -1,4 +1,6 @@
 #include "fighters/luie.hpp"
+
+#include "assets.hpp"
 #include "attack.hpp"
 
 class LuieGroundAttack : public Attack {
@@ -29,12 +31,20 @@ public:
 
 Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey)
-    : Fighter(Rectangle(0.0f, 0.0f, 10.0f, 30.0f), 15.0f, ACCELERATION,
+    : Fighter(Rectangle(0.f, 0.f, 64.f, 64.f), 15.f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
   respawn();
 }
 
-void Luie::draw() const { DrawRectangleRec(body, GREEN); }
+void Luie::draw() const { 
+  if (action == Action::IDLE) {
+    float x = 32.0f * float((aFrames % 64) / 8);
+    DrawTexturePro(Assets::STABBY_IDLE, Rectangle(x, 0.f, 32.f * float(dir), 32.f),
+  body, Vector2(0.f, 0.f), 0.f, GREEN);
+  } else {
+    DrawRectangleRec(body, GREEN);
+  }
+}
 
 std::unique_ptr<Attack> Luie::ground_attack() {
   return std::make_unique<LuieGroundAttack>(this);

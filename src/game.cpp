@@ -4,11 +4,15 @@
 
 #include "fighters/luie.hpp"
 #include "fighters/oscar.hpp"
+#include "fighters/slug.hpp"
 
 Game::Game() : stage(Stage::test()), fighters(), attacks() {
   fighters.emplace_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
   fighters.emplace_back(
       std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
+    fighters.emplace_back(
+      std::make_unique<Slug>(KEY_J, KEY_L, KEY_I, KEY_K)
+    );
 }
 
 void Game::update() {

@@ -13,8 +13,15 @@ class Tile;
 class Stage;
 
 enum class Dir {
-  LEFT,
-  RIGHT,
+  LEFT = 1,
+  RIGHT = -1,
+};
+
+enum class Action {
+  IDLE,
+  WALK,
+  GROUND_ATTACK,
+  AIR_ATTACK,
 };
 
 class Fighter {
@@ -32,6 +39,9 @@ protected:
   int32_t iFrames;
 
   std::optional<const Tile *> ground;
+
+  Action action;
+  uint32_t aFrames;
 
   int32_t leftKey;
   int32_t rightKey;
@@ -71,6 +81,15 @@ public:
    * If the player has invincibility frames, does nothing.
    */
   void hit(Attack &attack);
+
+  /**
+   * Sets the action to the given one.
+   * 
+   * If the action is different than the current one, resets the action frames.
+   * 
+   * @param action The action to be used.
+   */
+  void set_action(Action action);
 
   /**
    * The default update function for the fighter.
