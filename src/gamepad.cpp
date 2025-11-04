@@ -43,3 +43,7 @@ void Gamepad::update() {
     }
 }
 
+Gamepad Gamepad::giveController(Gamepad &gamepad) {
+    return *this;
+}
+

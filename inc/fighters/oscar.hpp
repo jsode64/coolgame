@@ -9,7 +9,8 @@ private:
   static constexpr float MAX_SPEED = 5.0;
 
 public:
-  Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
+  Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
+        int32_t jumpKeyController, int32_t attackKeyController);
 
   std::unique_ptr<Attack> ground_attack() override;
 

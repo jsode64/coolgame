@@ -45,9 +45,11 @@ public:
 };
 
 Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
-           int32_t attackKey)
+           int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
+           int32_t jumpKeyController, int32_t attackKeyController)
     : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
-              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, leftKeyController, rightKeyController, 
+              jumpKeyController, attackKeyController) {
   respawn();
 }
 

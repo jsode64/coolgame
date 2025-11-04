@@ -27,4 +27,6 @@ class Gamepad {
         void update();
 
         void id_check();
+
+        Gamepad giveController(Gamepad &gamepad);
 };

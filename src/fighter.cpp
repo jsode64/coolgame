@@ -3,6 +3,7 @@
 #include "game.hpp"
 #include "stage.hpp"
 #include "tile.hpp"
+#include "gamepad.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -11,10 +12,13 @@
 
 Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
                  float decceleration, float maxSpeedH, int32_t leftKey,
-                 int32_t rightKey, int32_t jumpKey, int32_t attackKey)
+                 int32_t rightKey, int32_t jumpKey, int32_t attackKey,
+                 int32_t leftKeyController, int32_t rightKeyController, 
+                 int32_t jumpKeyController, int32_t attackKeyController)
     : body(body), jumpSpeed(jumpSpeed), acceleration(acceleration),
       decceleration(decceleration), maxSpeedH(maxSpeedH), leftKey(leftKey),
-      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey) {
+      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey), leftKeyController(leftKeyController),
+      rightKeyController(rightKeyController), jumpKeyController(jumpKeyController), attackKeyController(attackKeyController) {
   v = Vector2(0.0f, 0.0f);
   dir = Dir::RIGHT;
 
@@ -68,9 +72,9 @@ void Fighter::set_action(Action _action) {
 }
 
 void Fighter::default_update(Game &game) {
-  bool left = IsKeyDown(leftKey);
-  bool right = IsKeyDown(rightKey);
-  bool jump = IsKeyDown(jumpKey);
+  bool left = IsKeyDown(leftKey) || IsGamepadButtonDown(0, leftKeyController);
+  bool right = IsKeyDown(rightKey) || IsGamepadButtonDown(0, rightKeyController);
+  bool jump = IsKeyDown(jumpKey) || IsGamepadButtonDown(0, jumpKeyController);
 
   handle_movement(left, right, jump);
   handle_oob();

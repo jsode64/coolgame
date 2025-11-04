@@ -50,11 +50,16 @@ protected:
   int32_t rightKey;
   int32_t jumpKey;
   int32_t attackKey;
+  int32_t leftKeyController;
+  int32_t rightKeyController;
+  int32_t jumpKeyController;
+  int32_t attackKeyController;
 
 public:
   Fighter(Rectangle body, float jumpSpeed, float acceleration,
           float decceleration, float maxSpeedH, int32_t leftKey,
-          int32_t rightKey, int32_t jumpKey, int32_t attackKey);
+          int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController,
+          int32_t rightKeyController, int32_t jumpKeyController, int32_t attackKeyController);
 
   virtual ~Fighter() = default;
 

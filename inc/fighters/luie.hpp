@@ -10,7 +10,8 @@ private:
   static constexpr float MAX_SPEED = 8.0;
 
 public:
-  Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
+  Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
+          int32_t jumpKeyController, int32_t attackKeyController);
 
   std::unique_ptr<Attack> ground_attack() override;
 
