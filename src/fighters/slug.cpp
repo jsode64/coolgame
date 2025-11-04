@@ -40,7 +40,7 @@ public:
 };
 
 Slug::Slug(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
-             int32_t attackKey)
+           int32_t attackKey)
     : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 10.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
   respawn();
@@ -60,14 +60,11 @@ void Slug::draw() const {
   } else {
     auto tick = (aFrames % 60) / 15;
     float x = tick == 3 ? 32.f : float(tick * 32);
-    DrawTexturePro(
-        Assets::SLUG_IDLE,
-        Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
-        Vector2(0.f, 0.f), 0.f, BROWN);
+    DrawTexturePro(Assets::SLUG_IDLE,
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
+                   Vector2(0.f, 0.f), 0.f, BROWN);
   }
 }
-
-bool Slug::can_ground_attack() const { return groundCd < 1; }
 
 std::unique_ptr<Attack> Slug::ground_attack() {
   groundCd = 60;
