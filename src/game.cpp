@@ -11,9 +11,7 @@ Game::Game() : stage(Stage::test()), fighters(), attacks(), controller() {
   fighters.emplace_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
   fighters.emplace_back(
       std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
-    fighters.emplace_back(
-      std::make_unique<Slug>(KEY_J, KEY_L, KEY_I, KEY_K)
-    );
+  fighters.emplace_back(std::make_unique<Slug>(KEY_J, KEY_L, KEY_I, KEY_K));
 }
 
 void Game::update() {
@@ -47,7 +45,7 @@ Stage &Game::get_stage() { return stage; }
 
 std::vector<std::unique_ptr<Fighter>> &Game::get_fighters() { return fighters; }
 
-std::vector<std::unique_ptr<Attack>> &Game::get_attacks() { return attacks; }
+std::list<std::unique_ptr<Attack>> &Game::get_attacks() { return attacks; }
 
 void Game::push_attack(std::unique_ptr<Attack> attack) {
   attacks.push_back(std::move(attack));

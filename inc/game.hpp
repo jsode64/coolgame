@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -16,7 +17,7 @@ private:
   Stage stage;
   Gamepad controller;
   std::vector<std::unique_ptr<Fighter>> fighters;
-  std::vector<std::unique_ptr<Attack>> attacks;
+  std::list<std::unique_ptr<Attack>> attacks;
 
 public:
   Game();
@@ -49,7 +50,7 @@ public:
   /**
    * Returns the game's attacks.
    */
-  std::vector<std::unique_ptr<Attack>> &get_attacks();
+  std::list<std::unique_ptr<Attack>> &get_attacks();
 
   /**
    * Pushes the attack to the game state.

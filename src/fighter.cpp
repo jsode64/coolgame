@@ -23,6 +23,7 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
 
   percentage = 0.f;
   iFrames = 0;
+  cooldown = 0;
 
   ground = std::nullopt;
 }
@@ -67,48 +68,53 @@ void Fighter::set_action(Action _action) {
 }
 
 void Fighter::default_update(Game &game) {
-  handle_movement();
+  bool left = IsKeyDown(leftKey);
+  bool right = IsKeyDown(rightKey);
+  bool jump = IsKeyDown(jumpKey);
+
+  handle_movement(left, right, jump);
   handle_oob();
   handle_collision(game.get_stage());
   handle_attacks(game.get_attacks());
+  handle_action(left, right);
 
+  cooldown--;
   iFrames--;
   aFrames++;
 }
 
 void Fighter::update(Game &game) { default_update(game); }
 
-bool Fighter::can_ground_attack() const { return true; }
+void Fighter::set_cooldown(int32_t _cooldown) { cooldown = _cooldown; }
 
-bool Fighter::can_air_attack() const { return true; }
+bool Fighter::can_attack() const { return cooldown < 0; }
 
-void Fighter::handle_movement() {
+void Fighter::handle_movement(bool left, bool right, bool jump) {
   // Horizontal movement.
-  bool left = IsKeyDown(leftKey);
-  bool right = IsKeyDown(rightKey);
-  bool hMove = left != right;
-  if (left) {
-    v.x -= std::clamp(v.x - -maxSpeedH, 0.0f, acceleration);
-    hMove = true;
-    dir = Dir::LEFT;
-  }
-  if (right) {
-    v.x += std::clamp(maxSpeedH - v.x, 0.0f, acceleration);
-    hMove = true;
-    dir = Dir::RIGHT;
+  if (can_attack()) {
+    if (left) {
+      v.x -= std::clamp(v.x - -maxSpeedH, 0.0f, acceleration);
+      dir = Dir::LEFT;
+    }
+    if (right) {
+      v.x += std::clamp(maxSpeedH - v.x, 0.0f, acceleration);
+      dir = Dir::RIGHT;
+    }
   }
 
-  if (left != right) {
-    set_action(Action::WALK);
-  } else if (std::abs(v.x) <= decceleration) {
+  // Deccelerate if no key is pressed.
+  if (!can_attack() || (!left && !right)) {
+    if (std::abs(v.x) <= decceleration) {
+      // Slowed down to a stop.
       v.x = 0.f;
-      set_action(Action::IDLE);
-  } else {
+    } else {
+      // Deccelerate.
       v.x -= std::copysign(decceleration, v.x);
+    }
   }
 
   // Vertical movement.
-  if (IsKeyDown(jumpKey) && ground.has_value()) {
+  if (IsKeyDown(jumpKey) && ground.has_value() && cooldown < 0) {
     v.y = -jumpSpeed;
     v.x += ground.value()->v.x;
   } else {
@@ -213,12 +219,35 @@ void Fighter::handle_collision(Stage &stage) {
   body.y = y;
 }
 
-void Fighter::handle_attacks(std::vector<std::unique_ptr<Attack>> &attacks) {
+void Fighter::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
+  // If can't attack now, nothing to be done.
+  if (!can_attack()) {
+    return;
+  }
+
   if (IsKeyDown(attackKey)) {
-    if (on_ground() && can_ground_attack()) {
+    if (on_ground()) {
       attacks.push_back(ground_attack());
-    } else if (can_air_attack()) {
+    } else {
       attacks.push_back(air_attack());
+    }
+  }
+}
+
+void Fighter::handle_action(bool left, bool right) {
+  if (ground.has_value()) {
+    if (cooldown > 0) {
+      set_action(Action::GROUND_ATTACK);
+    } else if (left != right) {
+      set_action(Action::WALK);
+    } else {
+      set_action(Action::IDLE);
+    }
+  } else {
+    if (cooldown > 0) {
+      set_action(Action::AIR_ATTACK);
+    } else {
+      set_action(Action::JUMP);
     }
   }
 }

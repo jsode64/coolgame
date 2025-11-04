@@ -14,8 +14,6 @@ private:
 public:
   Slug(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
 
-  bool can_ground_attack() const override;
-
   std::unique_ptr<Attack> ground_attack() override;
 
   std::unique_ptr<Attack> air_attack() override;

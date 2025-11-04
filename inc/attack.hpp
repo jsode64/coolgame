@@ -26,6 +26,9 @@ protected:
   // The attack's current body.
   Rectangle body;
 
+  // The attack's age in ticks.
+  uint32_t ticks;
+
 public:
   virtual ~Attack() = default;
 
@@ -72,10 +75,23 @@ public:
   virtual void on_hit(Fighter &p);
 
   /**
-   * Returns `true` if the attack is finished and should be deleted.
+   * Returns `true` if the attack is active and able to hit, `false` if not.
+   */
+  virtual bool is_active() const;
+
+  /**
+   * Returns `true` if the attack is finished and should be deleted, `false` if
+   * not.
    */
   virtual bool is_done() const;
 
 protected:
   Attack(Fighter *src, Vector2 kb, float damage, Rectangle body);
+
+  /**
+   * Default udpate function.
+   *
+   * Just increments the `.ticks`.
+   */
+  void default_update();
 };

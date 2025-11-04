@@ -46,32 +46,22 @@ Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
   respawn();
 }
 
-void Oscar::update(Game &game) {
-  groundCd--;
-  airCd--;
-
-  default_update(game);
-}
+void Oscar::update(Game &game) { default_update(game); }
 
 void Oscar::draw() const {
   if (action == Action::WALK) {
     float x = 32.f * float((aFrames % 48) / 6);
-    DrawTexturePro(
-        Assets::OSCAR_WALK,
-        Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
-        Vector2(0.f, 0.f), 0.f, RED);
+    DrawTexturePro(Assets::OSCAR_WALK,
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
+                   Vector2(0.f, 0.f), 0.f, RED);
   } else {
-    DrawTexturePro(
-        Assets::OSCAR_WALK,
-        Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), body,
-        Vector2(0.f, 0.f), 0.f, BLUE);
+    DrawTexturePro(Assets::OSCAR_WALK,
+                   Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), body,
+                   Vector2(0.f, 0.f), 0.f, BLUE);
   }
 }
 
-bool Oscar::can_ground_attack() const { return groundCd < 1; }
-
 std::unique_ptr<Attack> Oscar::ground_attack() {
-  groundCd = 60;
   return std::make_unique<OscarGroundAttack>(this);
 }
 

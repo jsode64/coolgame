@@ -2,10 +2,14 @@
 
 #include <iostream>
 
+Texture2D Assets::FOREST_BG = {0};
+
 Texture2D Assets::OSCAR_IDLE = {0};
 Texture2D Assets::OSCAR_WALK = {0};
 
-Texture2D Assets::STABBY_IDLE = { 0 };
+Texture2D Assets::STABBY_IDLE = {0};
+Texture2D Assets::STABBY_WALK = {0};
+Texture2D Assets::STABBY_SWING = {0};
 
 Texture2D Assets::SLUG_IDLE = {0};
 
@@ -19,10 +23,11 @@ bool load_asset(Texture2D &tex, const char *path) {
 }
 
 bool Assets::load() {
-  bool success = load_asset(OSCAR_IDLE, "assets/foo.png") &&
-                 load_asset(OSCAR_WALK, "assets/mansheet.png")
-                 && load_asset(STABBY_IDLE, "assets/stabby/stabby_idle.png")
-                 && load_asset(SLUG_IDLE, "assets/slug/slug.png");
-
-  return success;
+  return load_asset(FOREST_BG, "assets/bgs/forest_bg.png") &&
+         load_asset(OSCAR_IDLE, "assets/foo.png") &&
+         load_asset(OSCAR_WALK, "assets/mansheet.png") &&
+         load_asset(STABBY_IDLE, "assets/stabby/stabby_idle.png") &&
+         load_asset(STABBY_WALK, "assets/stabby/stabby_walk.png") &&
+         load_asset(STABBY_SWING, "assets/stabby/stabby_swing.png") &&
+         load_asset(SLUG_IDLE, "assets/slug/slug.png");
 }
