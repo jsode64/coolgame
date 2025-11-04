@@ -6,6 +6,7 @@
 #include "attack.hpp"
 #include "fighter.hpp"
 #include "stage.hpp"
+#include "gamepad.hpp"
 
 class Attack;
 class Fighter;
@@ -13,6 +14,7 @@ class Fighter;
 class Game {
 private:
   Stage stage;
+  Gamepad controller;
   std::vector<std::unique_ptr<Fighter>> fighters;
   std::vector<std::unique_ptr<Attack>> attacks;
 
@@ -38,6 +40,11 @@ public:
    * Returns the game's fighters.
    */
   std::vector<std::unique_ptr<Fighter>> &get_fighters();
+
+  /**
+   * Returns the game's controllers.
+   */
+  // std::vector<std::unique_ptr<Gamepad>> &();
 
   /**
    * Returns the game's attacks.

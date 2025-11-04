@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "gamepad.hpp"
 
 #include "raylib.h"
 
@@ -6,7 +7,7 @@
 #include "fighters/oscar.hpp"
 #include "fighters/slug.hpp"
 
-Game::Game() : stage(Stage::test()), fighters(), attacks() {
+Game::Game() : stage(Stage::test()), fighters(), attacks(), controller() {
   fighters.emplace_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S));
   fighters.emplace_back(
       std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));
@@ -17,6 +18,7 @@ Game::Game() : stage(Stage::test()), fighters(), attacks() {
 
 void Game::update() {
   stage.update();
+  controller.update();
   for (auto &fighter : fighters)
     fighter->update(*this);
   for (auto &attack : attacks) {
@@ -34,6 +36,7 @@ void Game::update() {
 
 void Game::draw() const {
   stage.draw();
+  controller.id_display();
   for (const auto &fighter : fighters)
     fighter->draw();
   for (const auto &attack : attacks)
