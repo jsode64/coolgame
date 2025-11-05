@@ -50,13 +50,13 @@ void Fighter::hit(Attack &attack) {
     return;
   }
 
-  auto dmg = attack.get_dmg();
-  auto kb = attack.get_kb();
+  percentage += attack.get_damage();
 
-  percentage += dmg;
-  v.x = kb.x * (percentage + 100.f) / 100.f;
-  v.y = kb.y * (percentage + 100.f) / 100.f;
-  iFrames = 15;
+  auto kb = attack.get_kb_vec(percentage);
+  v.x = kb.x;
+  v.y = kb.y;
+
+  iFrames = 30;
 }
 
 void Fighter::set_action(Action _action) {

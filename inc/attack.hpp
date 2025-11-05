@@ -17,17 +17,26 @@ protected:
   // The fighter the attack came from.
   Fighter *src;
 
-  // The attack's current knockback.
-  Vector2 kb;
-
-  // The attack's current damage.
-  float dmg;
-
   // The attack's current body.
   Rectangle body;
 
   // The attack's age in ticks.
   uint32_t ticks;
+
+  // The attack's knockback angle's x factor.
+  float kx;
+
+  // The attack's knockback angle's y factor.
+  float ky;
+
+  // The attack's damage.
+  float d;
+
+  // The attack's base knockback.
+  float k;
+
+  // The attack's knockback growth.
+  float g;
 
 public:
   virtual ~Attack() = default;
@@ -38,18 +47,21 @@ public:
   void handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters);
 
   /**
-   * The attack's damage value.
-   *
-   * @return The attack's damage
+   * Returns the attack's damage.
+   * 
+   * @return The attack's damage.
    */
-  float get_dmg() const;
+  float get_damage() const;
+
 
   /**
-   * The attack's knockback value.
+   * The attack's knockback vector.
+   * 
+   * @param p The target's percent.
    *
    * @return The attack's knockback
    */
-  Vector2 get_kb() const;
+  Vector2 get_kb_vec(float p) const;
 
   /**
    * The attack's update function.
@@ -86,7 +98,7 @@ public:
   virtual bool is_done() const;
 
 protected:
-  Attack(Fighter *src, Vector2 kb, float damage, Rectangle body);
+  Attack(Fighter *src, Rectangle body, float angle, float d, float k, float g);
 
   /**
    * Default udpate function.

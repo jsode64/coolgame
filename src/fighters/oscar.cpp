@@ -10,7 +10,7 @@ private:
 
 public:
   OscarGroundAttack(Fighter *src)
-      : Attack(src, Vector2(0.f, -5.f), 1.f, src->get_body()), done(false) {
+      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 30., 2.), done(false) {
     vx = src->get_dir() == Dir::LEFT ? -1.f : 1.f;
   }
 
@@ -34,7 +34,7 @@ public:
 class OscarAirAttack : public Attack {
 public:
   OscarAirAttack(Fighter *src)
-      : Attack(src, Vector2(0.0f, -0.5f), 10.0f, src->get_body()) {}
+      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 4., 2.) {}
 
   bool is_done() const override { return true; }
 };
