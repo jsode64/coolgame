@@ -2,7 +2,7 @@
 
 #include "../fighter.hpp"
 
-class Luie : public Fighter {
+class Stabby : public Fighter {
 public:
 private:
   static constexpr float ACCELERATION = 1.0;
@@ -10,7 +10,7 @@ private:
   static constexpr float MAX_SPEED = 8.0;
 
 public:
-  Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
+  Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey);
 
   std::unique_ptr<Attack> ground_attack() override;
 
