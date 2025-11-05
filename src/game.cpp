@@ -3,12 +3,12 @@
 
 #include "raylib.h"
 
-#include "fighters/luie.hpp"
+#include "fighters/stabby.hpp"
 #include "fighters/oscar.hpp"
 #include "fighters/slug.hpp"
 
 Game::Game() : stage(Stage::test()), fighters(), attacks(), controller() {
-  fighters.emplace_back(std::make_unique<Luie>(KEY_A, KEY_D, KEY_W, KEY_S, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
+  fighters.emplace_back(std::make_unique<Stabby>(KEY_A, KEY_D, KEY_W, KEY_S, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
   GAMEPAD_BUTTON_RIGHT_FACE_UP, GAMEPAD_BUTTON_RIGHT_FACE_LEFT));
   fighters.emplace_back(
       std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,

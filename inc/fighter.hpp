@@ -50,6 +50,7 @@ protected:
   int32_t rightKey;
   int32_t jumpKey;
   int32_t attackKey;
+
   int32_t leftKeyController;
   int32_t rightKeyController;
   int32_t jumpKeyController;

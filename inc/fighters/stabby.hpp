@@ -2,7 +2,7 @@
 
 #include "../fighter.hpp"
 
-class Luie : public Fighter {
+class Stabby : public Fighter {
 public:
 private:
   static constexpr float ACCELERATION = 1.0;
@@ -11,7 +11,7 @@ private:
   static constexpr bool controllerFlag = true;
 
 public:
-  Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
+  Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
           int32_t jumpKeyController, int32_t attackKeyController);
 
   std::unique_ptr<Attack> ground_attack() override;

@@ -1,15 +1,15 @@
-#include "fighters/luie.hpp"
+#include "fighters/stabby.hpp"
 
 #include "assets.hpp"
 #include "attack.hpp"
 
-class LuieGroundAttack : public Attack {
+class StabbyGroundAttack : public Attack {
 private:
   constexpr static float W = 64.f;
   constexpr static float H = 34.f;
 
 public:
-  LuieGroundAttack(Fighter *src)
+  StabbyGroundAttack(Fighter *src)
       : Attack(src, Vector2(8.f * float(src->get_dir()), -2.f), 5.0f,
                src->get_body()) {
     auto srcBody = src->get_body();
@@ -36,16 +36,16 @@ public:
   bool is_done() const override { return ticks > 30; }
 };
 
-class LuieAirAttack : public Attack {
+class StabbyAirAttack : public Attack {
 public:
-  LuieAirAttack(Fighter *src)
+  StabbyAirAttack(Fighter *src)
       : Attack(src, Vector2(0.0f, -0.5f), 1.0f, src->get_body()) {}
 
   bool is_done() const override { return true; }
 };
 
-Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
-           int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
+Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
+           int32_t attackKey,  int32_t leftKeyController, int32_t rightKeyController, 
            int32_t jumpKeyController, int32_t attackKeyController)
     : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, leftKeyController, rightKeyController, 
@@ -53,7 +53,7 @@ Luie::Luie(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
   respawn();
 }
 
-void Luie::draw() const {
+void Stabby::draw() const {
   Rectangle src = Rectangle(0.f, 0.f, 32.f, 32.f);
   Rectangle dst = Rectangle(body.x - 12.f, body.y - 16.f, 64.f, 64.f);
   Texture2D tex = {0};
@@ -83,12 +83,12 @@ void Luie::draw() const {
                  Color(225, 150, 150, 255));
 }
 
-std::unique_ptr<Attack> Luie::ground_attack() {
+std::unique_ptr<Attack> Stabby::ground_attack() {
   set_cooldown(32);
-  return std::make_unique<LuieGroundAttack>(this);
+  return std::make_unique<StabbyGroundAttack>(this);
 }
 
-std::unique_ptr<Attack> Luie::air_attack() {
+std::unique_ptr<Attack> Stabby::air_attack() {
   set_cooldown(30);
-  return std::make_unique<LuieAirAttack>(this);
+  return std::make_unique<StabbyAirAttack>(this);
 }
