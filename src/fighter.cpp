@@ -5,6 +5,7 @@
 #include "tile.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 #include "config.hpp"
 
@@ -128,6 +129,7 @@ void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= WIN_W || body.y >= WIN_H;
 
   if (oob) {
+    std::cout << "Respawning from OOB" << std::endl;
     respawn();
   }
 }
@@ -154,6 +156,7 @@ void Fighter::handle_collision(Stage &stage) {
         CheckCollisionRecs(testBody, pre.body)) {
       // Check if crushed (collided twice).
       if (hitX) {
+        std::cout << "Respawning from x squish" << std::endl;
         respawn();
         return;
       } else {
@@ -194,6 +197,7 @@ void Fighter::handle_collision(Stage &stage) {
     if (CheckCollisionRecs(testBody, tile.body)) {
       // Check if crushed (collided twice).
       if (hitY) {
+        std::cout << "Respawning from y squish" << std::endl;
         respawn();
         return;
       } else {
