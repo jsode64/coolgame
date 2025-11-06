@@ -6,6 +6,7 @@
 #include "gamepad.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 
 #include "config.hpp"
