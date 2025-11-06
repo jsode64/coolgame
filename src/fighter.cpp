@@ -6,7 +6,7 @@
 #include "gamepad.hpp"
 
 #include <algorithm>
-#include <cmath>
+#include <iostream>
 
 #include "config.hpp"
 
@@ -55,13 +55,13 @@ void Fighter::hit(Attack &attack) {
     return;
   }
 
-  auto dmg = attack.get_dmg();
-  auto kb = attack.get_kb();
+  percentage += attack.get_damage();
 
-  percentage += dmg;
-  v.x = kb.x * (percentage + 100.f) / 100.f;
-  v.y = kb.y * (percentage + 100.f) / 100.f;
-  iFrames = 15;
+  auto kb = attack.get_kb_vec(percentage);
+  v.x = kb.x;
+  v.y = kb.y;
+
+  iFrames = 30;
 }
 
 void Fighter::set_action(Action _action) {
@@ -133,6 +133,7 @@ void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= WIN_W || body.y >= WIN_H;
 
   if (oob) {
+    std::cout << "Respawning from OOB" << std::endl;
     respawn();
   }
 }
@@ -140,7 +141,8 @@ void Fighter::handle_oob() {
 void Fighter::handle_collision(Stage &stage) {
   float x = body.x + v.x;
   float y = body.y + v.y;
-  bool hitX, hitY = false;
+  bool hitX = false;
+  bool hitY = false;
 
   // If on a tile, move with it.
   if (ground.has_value()) {
@@ -159,6 +161,7 @@ void Fighter::handle_collision(Stage &stage) {
         CheckCollisionRecs(testBody, pre.body)) {
       // Check if crushed (collided twice).
       if (hitX) {
+        std::cout << "Respawning from x squish" << std::endl;
         respawn();
         return;
       } else {
@@ -199,6 +202,7 @@ void Fighter::handle_collision(Stage &stage) {
     if (CheckCollisionRecs(testBody, tile.body)) {
       // Check if crushed (collided twice).
       if (hitY) {
+        std::cout << "Respawning from y squish" << std::endl;
         respawn();
         return;
       } else {

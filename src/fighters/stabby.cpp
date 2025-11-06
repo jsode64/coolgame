@@ -10,8 +10,7 @@ private:
 
 public:
   StabbyGroundAttack(Fighter *src)
-      : Attack(src, Vector2(8.f * float(src->get_dir()), -2.f), 5.0f,
-               src->get_body()) {
+      : Attack(src, src->get_body(), 30.*DEG2RAD, 15., 15., 1.2) {
     auto srcBody = src->get_body();
     float x = srcBody.x + (srcBody.width / 2.f);
     float y = srcBody.y + (srcBody.height / 2.f);
@@ -39,7 +38,7 @@ public:
 class StabbyAirAttack : public Attack {
 public:
   StabbyAirAttack(Fighter *src)
-      : Attack(src, Vector2(0.0f, -0.5f), 1.0f, src->get_body()) {}
+      : Attack(src, src->get_body(), 90.*DEG2RAD, 0., 50., 50.) {}
 
   bool is_done() const override { return true; }
 };
