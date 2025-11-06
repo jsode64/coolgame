@@ -137,7 +137,8 @@ void Fighter::handle_oob() {
 void Fighter::handle_collision(Stage &stage) {
   float x = body.x + v.x;
   float y = body.y + v.y;
-  bool hitX, hitY = false;
+  bool hitX = false;
+  bool hitY = false;
 
   // If on a tile, move with it.
   if (ground.has_value()) {
