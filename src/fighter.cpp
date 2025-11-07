@@ -5,7 +5,7 @@
 #include "tile.hpp"
 
 #include <algorithm>
-#include <iostream>
+#include <cmath>
 
 #include "config.hpp"
 
@@ -129,7 +129,6 @@ void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= WIN_W || body.y >= WIN_H;
 
   if (oob) {
-    std::cout << "Respawning from OOB" << std::endl;
     respawn();
   }
 }
@@ -137,8 +136,13 @@ void Fighter::handle_oob() {
 void Fighter::handle_collision(Stage &stage) {
   float x = body.x + v.x;
   float y = body.y + v.y;
-  bool hitX = false;
-  bool hitY = false;
+
+  /* Tracking squishing. Each is tracking if hit from that direction, for
+  example, `hitDown` will be true when hit from below (landing/standing) */
+  bool hitUp = false;
+  bool hitDown = false;
+  bool hitLeft = false;
+  bool hitRight = false;
 
   // If on a tile, move with it.
   if (ground.has_value()) {
@@ -155,39 +159,36 @@ void Fighter::handle_collision(Stage &stage) {
     pre.body.y -= tile.v.y;
     if (CheckCollisionRecs(testBody, tile.body) &&
         CheckCollisionRecs(testBody, pre.body)) {
-      // Check if crushed (collided twice).
-      if (hitX) {
-        std::cout << "Respawning from x squish" << std::endl;
-        respawn();
-        return;
-      } else {
-        hitX = true;
-      }
-
       if (v.x > 0.0f) {
-        // Both moving right, tile faster:
         if (tile.v.x > v.x) {
+          // Both moving right, tile faster:
           x = tile.body.x + tile.body.width;
           v.x = tile.v.x;
+          hitLeft = true;
         } else {
           x = tile.body.x - body.width;
           v.x = 0.0f;
+          hitRight = true;
         }
       } else if (v.x < 0.0f) {
-        // Both moving left, tile faster:
         if (tile.v.x < v.x) {
+          // Both moving left, tile faster:
           x = tile.body.x - body.width;
           v.x = tile.v.x;
+          hitRight = true;
         } else {
           x = tile.body.x + tile.body.width;
           v.x = 0.0f;
+          hitLeft = true;
         }
       } else {
         // Player not moving, tile must have hit them.
         if (tile.v.x > 0.0f) {
           x = tile.body.x + tile.body.width;
+          hitLeft = true;
         } else {
           x = tile.body.x - body.width;
+          hitRight = true;
         }
         v.x += tile.v.x;
       }
@@ -196,26 +197,25 @@ void Fighter::handle_collision(Stage &stage) {
     // Vertical collision check.
     testBody = Rectangle(x, y, body.width, body.height);
     if (CheckCollisionRecs(testBody, tile.body)) {
-      // Check if crushed (collided twice).
-      if (hitY) {
-        std::cout << "Respawning from y squish" << std::endl;
-        respawn();
-        return;
-      } else {
-        hitY = true;
-      }
-
       if (v.y >= 0.0f) {
         y = tile.body.y - body.height;
 
         // On ground.
         ground = std::optional<const Tile *>{&tile};
         tile.stood_on();
+        hitDown = true;
       } else {
         y = tile.body.y + tile.body.height;
+        hitUp = true;
       }
       v.y = 0;
     }
+
+      // Check for squish.
+      if ((hitLeft && hitRight) || (hitUp && hitDown)) {
+        respawn();
+        return;
+      }
   }
 
   // Move to new position.
