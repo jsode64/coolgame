@@ -2,6 +2,7 @@
 
 #include "assets.hpp"
 #include "attack.hpp"
+#include "util.hpp"
 
 class SlugGroundAttack : public Attack {
 private:
@@ -55,13 +56,12 @@ void Slug::update(Game &game) {
 
 void Slug::draw() const {
   if (action == Action::WALK) {
-
-    DrawRectangleRec(body, BROWN);
+    DrawRectangleRec(rect_to_win(body), BROWN);
   } else {
     auto tick = (aFrames % 60) / 15;
     float x = tick == 3 ? 32.f : float(tick * 32);
     DrawTexturePro(Assets::SLUG_IDLE,
-                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
                    Vector2(0.f, 0.f), 0.f, BROWN);
   }
 }

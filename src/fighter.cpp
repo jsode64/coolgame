@@ -29,8 +29,8 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
 }
 
 void Fighter::respawn() {
-  body.x = (float(WIN_W) - body.width) / 2.f;
-  body.y = (float(WIN_H) - body.height) / 2.f;
+  body.x = (float(SIM_W) - body.width) / 2.f;
+  body.y = (float(SIM_H) - body.height) / 2.f;
 
   v = Vector2(0.0f, 0.0f);
 
@@ -126,7 +126,7 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
 }
 
 void Fighter::handle_oob() {
-  bool oob = body.x <= -body.width || body.x >= WIN_W || body.y >= WIN_H;
+  bool oob = body.x <= -body.width || body.x >= SIM_W || body.y >= SIM_H;
 
   if (oob) {
     respawn();

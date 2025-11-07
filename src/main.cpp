@@ -8,7 +8,8 @@
 
 int main() {
   SetTraceLogLevel(LOG_NONE);
-  InitWindow(WIN_W, WIN_H, "Cool Game");
+  InitWindow(SIM_W, SIM_H, "Cool Game");
+  SetWindowState(FLAG_WINDOW_RESIZABLE);
   SetTargetFPS(60);
 
   if (!Assets::load()) {
@@ -26,7 +27,7 @@ int main() {
     BeginDrawing();
     ClearBackground(WHITE);
     DrawTexturePro(Assets::FOREST_BG, Rectangle(0.f, 0.f, 800.f, 448.f),
-                   Rectangle(0.f, 0.f, WIN_W, WIN_H), Vector2(0.f, 0.f), 0.f,
+                   Rectangle(0.f, 0.f, GetScreenWidth(), GetScreenHeight()), Vector2(0.f, 0.f), 0.f,
                    WHITE);
     game.draw();
     EndDrawing();

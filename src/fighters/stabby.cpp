@@ -2,6 +2,7 @@
 
 #include "assets.hpp"
 #include "attack.hpp"
+#include "util.hpp"
 
 class StabbyGroundAttack : public Attack {
 private:
@@ -26,7 +27,7 @@ public:
 
   void draw() const override {
     if (is_active()) {
-      DrawRectangleRec(body, Color(255, 0, 0, 128));
+      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
     }
   }
 
@@ -52,7 +53,7 @@ Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
 
 void Stabby::draw() const {
   Rectangle src = Rectangle(0.f, 0.f, 32.f, 32.f);
-  Rectangle dst = Rectangle(body.x - 12.f, body.y - 16.f, 64.f, 64.f);
+  Rectangle dst = Rectangle(body.x - 22.f, body.y - 16.f, 64.f, 64.f);
   Texture2D tex = {0};
 
   if (action == Action::IDLE) {
@@ -72,11 +73,11 @@ void Stabby::draw() const {
     src.width = 48.f;
     tex = Assets::STABBY_SWING;
   } else {
-    DrawRectangleRec(body, GREEN);
+    DrawRectangleRec(rect_to_win(dst), GREEN);
   }
 
   src.width *= float(dir);
-  DrawTexturePro(tex, src, dst, Vector2(0.f, 0.f), 0.f,
+  DrawTexturePro(tex, src, rect_to_win(dst), Vector2(0.f, 0.f), 0.f,
                  Color(225, 150, 150, 255));
 }
 

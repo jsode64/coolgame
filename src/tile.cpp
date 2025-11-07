@@ -16,7 +16,7 @@ void Tile::update() {
 
   if (canFall) {
     // If fallen below the screen, start moving up.
-    if (body.y > WIN_H) {
+    if (body.y > SIM_H) {
       v.y = -RISE_FALL_SPEED;
     } else if (stoodOnTime > 0.0f && float(GetTime()) - stoodOnTime > time &&
                v.y >= 0.0f) {
@@ -49,7 +49,7 @@ void Tile::handle_rise_fall() {
   }
 
   // Begin rising when reaching the bottom of the screen.
-  if (body.y > WIN_H) {
+  if (body.y > SIM_H) {
     v.y = -RISE_FALL_SPEED;
     stoodOnTime = -1.0f;
   }
