@@ -2,6 +2,7 @@
 
 #include "assets.hpp"
 #include "attack.hpp"
+#include "util.hpp"
 
 class OscarGroundAttack : public Attack {
 private:
@@ -54,11 +55,11 @@ void Oscar::draw() const {
   if (action == Action::WALK) {
     float x = 32.f * float((aFrames % 48) / 6);
     DrawTexturePro(Assets::OSCAR_WALK,
-                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), body,
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
                    Vector2(0.f, 0.f), 0.f, RED);
   } else {
     DrawTexturePro(Assets::OSCAR_WALK,
-                   Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), body,
+                   Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
                    Vector2(0.f, 0.f), 0.f, BLUE);
   }
 }

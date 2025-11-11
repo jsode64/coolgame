@@ -1,12 +1,12 @@
 #include "stage.hpp"
 
-#include "config.hpp"
+#include "util.hpp"
 #include "tile.hpp"
 
 #include <cmath>
 #include <numbers>
 
-Stage::Stage() : tiles(), color(BLACK) {}
+Stage::Stage() : tiles(), color(BLUE) {}
 
 Stage Stage::test() {
   Stage stage;
@@ -42,6 +42,7 @@ void Stage::update() {
 
 void Stage::draw() const {
   for (const auto &tile : tiles) {
-    DrawRectangleRec(tile.body, color);
+    auto scaled = rect_to_win(tile.body);
+    DrawRectangleRec(scaled, color);
   }
 }
