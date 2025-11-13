@@ -18,17 +18,24 @@ class Gamepad {
         const float rightTriggerDeadzone = -0.9f;
     public:
 
+        // This creates a gamepad of a specified port number
         Gamepad(int portin);
 
+        // This checks if a gamepad is available
         bool gamepad_check();
 
+        // This displays the ID to the screen
         void id_display() const;
 
+        // This updates the controller
         void update();
 
+        // This chacks the controller ID
         void id_check();
 
+        // This returns the Controller Object
         Gamepad giveController();
 
+        // This returns the Controller Port Number
         int portReturn();
 };
