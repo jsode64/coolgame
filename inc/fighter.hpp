@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <list>
 #include <memory>
 #include <optional>
 #include <vector>
@@ -14,16 +13,8 @@ class Tile;
 class Stage;
 
 enum class Dir {
-  LEFT = -1,
-  RIGHT = 1,
-};
-
-enum class Action {
-  IDLE,
-  WALK,
-  JUMP,
-  GROUND_ATTACK,
-  AIR_ATTACK,
+  LEFT,
+  RIGHT,
 };
 
 class Fighter {
@@ -39,22 +30,19 @@ protected:
 
   float percentage;
   int32_t iFrames;
-  int32_t cooldown;
 
   std::optional<const Tile *> ground;
-
-  Action action;
-  uint32_t aFrames;
 
   int32_t leftKey;
   int32_t rightKey;
   int32_t jumpKey;
   int32_t attackKey;
+  int32_t pauseKey;
 
 public:
   Fighter(Rectangle body, float jumpSpeed, float acceleration,
           float decceleration, float maxSpeedH, int32_t leftKey,
-          int32_t rightKey, int32_t jumpKey, int32_t attackKey);
+          int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t pauseKey);
 
   virtual ~Fighter() = default;
 
@@ -63,6 +51,7 @@ public:
    */
   void respawn();
 
+  bool isPaused();
   /**
    * Returns the fighter's direction.
    */
@@ -84,15 +73,6 @@ public:
    * If the player has invincibility frames, does nothing.
    */
   void hit(Attack &attack);
-
-  /**
-   * Sets the action to the given one.
-   *
-   * If the action is different than the current one, resets the action frames.
-   *
-   * @param action The action to be used.
-   */
-  void set_action(Action action);
 
   /**
    * The default update function for the fighter.
@@ -118,6 +98,24 @@ public:
   virtual void draw() const = 0;
 
   /**
+   * Returns `true` if a ground attack can be used.
+   *
+   * By default, returns `true` always.
+   *
+   * @return Is `true` if can attack, `false` if not.
+   */
+  virtual bool can_ground_attack() const;
+
+  /**
+   * Returns `true` if an air attack can be used.
+   *
+   * By default, returns `true` always.
+   *
+   * @return Is `true` if can attack, `false` if not.
+   */
+  virtual bool can_air_attack() const;
+
+  /**
    * Returns a new ground attack.
    */
   virtual std::unique_ptr<Attack> ground_attack() = 0;
@@ -129,20 +127,9 @@ public:
 
 protected:
   /**
-   * Sets the attack cooldown.
-   */
-  void set_cooldown(int32_t cooldown);
-
-  /**
-   * Returns `true` if the attack cooldown is over, `false` if not.
-   */
-  bool can_attack() const;
-
-private:
-  /**
    * Handles fighter movement via user input.
    */
-  void handle_movement(bool left, bool right, bool jump);
+  void handle_movement();
 
   /**
    * Handles player being OOB (out of bounds).
@@ -159,10 +146,6 @@ private:
   /**
    * Handles the fighter using an attack.
    */
-  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
+  void handle_attacks(std::vector<std::unique_ptr<Attack>> &attacks);
 
-  /**
-   * Handles the fighter action state.
-   */
-  void handle_action(bool left, bool right);
 };
