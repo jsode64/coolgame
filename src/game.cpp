@@ -6,7 +6,7 @@
 #include "fighters/oscar.hpp"
 #include "fighters/slug.hpp"
 
-Game::Game() : stage(Stage::test()), fighters(), attacks() {
+Game::Game() : stage(Stage::stage_one()), fighters(), attacks() {
   fighters.emplace_back(std::make_unique<Stabby>(KEY_A, KEY_D, KEY_W, KEY_S));
   fighters.emplace_back(
       std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN));

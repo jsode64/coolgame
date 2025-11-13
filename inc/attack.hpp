@@ -99,11 +99,4 @@ public:
 
 protected:
   Attack(Fighter *src, Rectangle body, float angle, float d, float k, float g);
-
-  /**
-   * Default udpate function.
-   *
-   * Just increments the `.ticks`.
-   */
-  void default_update();
 };

@@ -25,6 +25,7 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
   iFrames = 0;
   cooldown = 0;
 
+  hasDoubleJump = false;
   ground = std::nullopt;
 }
 
@@ -42,6 +43,8 @@ void Fighter::respawn() {
 Dir Fighter::get_dir() const { return dir; }
 
 Rectangle Fighter::get_body() const { return body; }
+
+Vector2 Fighter::get_v() const { return v; }
 
 bool Fighter::on_ground() const { return ground.has_value(); }
 
@@ -67,7 +70,7 @@ void Fighter::set_action(Action _action) {
   }
 }
 
-void Fighter::default_update(Game &game) {
+void Fighter::update(Game &game) {
   bool left = IsKeyDown(leftKey);
   bool right = IsKeyDown(rightKey);
   bool jump = IsKeyDown(jumpKey);
@@ -83,8 +86,6 @@ void Fighter::default_update(Game &game) {
   aFrames++;
 }
 
-void Fighter::update(Game &game) { default_update(game); }
-
 void Fighter::set_cooldown(int32_t _cooldown) { cooldown = _cooldown; }
 
 bool Fighter::can_attack() const { return cooldown < 0; }
@@ -93,11 +94,11 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
   // Horizontal movement.
   if (can_attack()) {
     if (left) {
-      v.x -= std::clamp(v.x - -maxSpeedH, 0.0f, acceleration);
+      v.x -= std::clamp(v.x - -maxSpeedH, 0.f, acceleration);
       dir = Dir::LEFT;
     }
     if (right) {
-      v.x += std::clamp(maxSpeedH - v.x, 0.0f, acceleration);
+      v.x += std::clamp(maxSpeedH - v.x, 0.f, acceleration);
       dir = Dir::RIGHT;
     }
   }
@@ -114,9 +115,13 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
   }
 
   // Vertical movement.
-  if (IsKeyDown(jumpKey) && ground.has_value() && cooldown < 0) {
+  if (IsKeyPressed(jumpKey) && (ground.has_value() || hasDoubleJump) && cooldown < 0) {
     v.y = -jumpSpeed;
-    v.x += ground.value()->v.x;
+    if (on_ground()) {
+      v.x += (*ground.value())->get_v().x;
+    } else {
+      hasDoubleJump = false;
+    }
   } else {
     v.y += GRAVITY;
   }
@@ -146,66 +151,68 @@ void Fighter::handle_collision(Stage &stage) {
 
   // If on a tile, move with it.
   if (ground.has_value()) {
-    auto floor = ground.value();
-    x += floor->v.x;
+    x += (*ground.value())->get_v().x;
   }
 
   ground = std::nullopt;
 
   for (auto &tile : stage.get_tiles()) {
     // Horizontal collision check.
+    auto tileBody = tile->get_body();
+    auto tileV = tile->get_v();
     auto testBody = Rectangle(x, body.y, body.width, body.height);
-    auto pre = tile;
-    pre.body.y -= tile.v.y;
-    if (CheckCollisionRecs(testBody, tile.body) &&
-        CheckCollisionRecs(testBody, pre.body)) {
+    auto pre = tileBody;
+    pre.y -= tileV.y;
+    if (CheckCollisionRecs(testBody, tileBody) &&
+        CheckCollisionRecs(testBody, pre)) {
       if (v.x > 0.0f) {
-        if (tile.v.x > v.x) {
+        if (tileV.x > v.x) {
           // Both moving right, tile faster:
-          x = tile.body.x + tile.body.width;
-          v.x = tile.v.x;
+          x = tileBody.x + tileBody.width;
+          v.x = tileV.x;
           hitLeft = true;
         } else {
-          x = tile.body.x - body.width;
+          x = tileBody.x - body.width;
           v.x = 0.0f;
           hitRight = true;
         }
       } else if (v.x < 0.0f) {
-        if (tile.v.x < v.x) {
+        if (tileV.x < v.x) {
           // Both moving left, tile faster:
-          x = tile.body.x - body.width;
-          v.x = tile.v.x;
+          x = tileBody.x - body.width;
+          v.x = tileV.x;
           hitRight = true;
         } else {
-          x = tile.body.x + tile.body.width;
+          x = tileBody.x + tileBody.width;
           v.x = 0.0f;
           hitLeft = true;
         }
       } else {
         // Player not moving, tile must have hit them.
-        if (tile.v.x > 0.0f) {
-          x = tile.body.x + tile.body.width;
+        if (tileV.x > 0.0f) {
+          x = tileBody.x + tileBody.width;
           hitLeft = true;
         } else {
-          x = tile.body.x - body.width;
+          x = tileBody.x - body.width;
           hitRight = true;
         }
-        v.x += tile.v.x;
+        v.x += tileV.x;
       }
     }
 
     // Vertical collision check.
     testBody = Rectangle(x, y, body.width, body.height);
-    if (CheckCollisionRecs(testBody, tile.body)) {
+    if (CheckCollisionRecs(testBody, tileBody)) {
       if (v.y >= 0.0f) {
-        y = tile.body.y - body.height;
+        y = tileBody.y - body.height;
 
         // On ground.
-        ground = std::optional<const Tile *>{&tile};
-        tile.stood_on();
+        hasDoubleJump = true;
+        ground.emplace(&tile);
+        tile->stood_on();
         hitDown = true;
       } else {
-        y = tile.body.y + tile.body.height;
+        y = tileBody.y + tileBody.height;
         hitUp = true;
       }
       v.y = 0;
@@ -239,10 +246,14 @@ void Fighter::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
 }
 
 void Fighter::handle_action(bool left, bool right) {
-  if (ground.has_value()) {
-    if (cooldown > 0) {
-      set_action(Action::GROUND_ATTACK);
-    } else if (left != right) {
+  if (cooldown == 0) {
+    if (action == Action::AIR_ATTACK) {
+      set_action(Action::JUMP);
+    } else {
+      set_action(Action::IDLE);
+    }
+  } else if (ground.has_value()) {
+    if (left != right) {
       set_action(Action::WALK);
     } else {
       set_action(Action::IDLE);

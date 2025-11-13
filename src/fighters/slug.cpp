@@ -20,7 +20,7 @@ public:
 
     // End attack if collided with anything.
     for (const auto &tile : game.get_stage().get_tiles()) {
-      if (CheckCollisionRecs(body, tile.body)) {
+      if (CheckCollisionRecs(body, tile->get_body())) {
         done = true;
         break;
       }
@@ -51,7 +51,7 @@ void Slug::update(Game &game) {
   groundCd--;
   airCd--;
 
-  default_update(game);
+  Fighter::update(game);
 }
 
 void Slug::draw() const {

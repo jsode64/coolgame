@@ -11,19 +11,15 @@ private:
 
 public:
   StabbyGroundAttack(Fighter *src)
-      : Attack(src, src->get_body(), 30.*DEG2RAD, 15., 15., 1.2) {
-    auto srcBody = src->get_body();
-    float x = srcBody.x + (srcBody.width / 2.f);
-    float y = srcBody.y + (srcBody.height / 2.f);
-
-    if (src->get_dir() == Dir::LEFT) {
-      body = Rectangle(x - W, y - (H / 2.f), W, H);
-    } else {
-      body = Rectangle(x, y - (H / 2.f), W, H);
-    }
+      : Attack(src, src->get_body(), 30.f*DEG2RAD, 15.f, 15.f, 1.2f) {
+        body = calc_body();
   }
 
-  void update(Game &_) override { default_update(); }
+  void update(Game &game) override {
+    body = calc_body();
+
+    Attack::update(game);
+  }
 
   void draw() const override {
     if (is_active()) {
@@ -31,17 +27,67 @@ public:
     }
   }
 
-  bool is_active() const override { return ticks > 8 && ticks < 16; }
+  bool is_active() const override { return ticks >= 8 && ticks < 16; }
 
-  bool is_done() const override { return ticks > 30; }
+  bool is_done() const override { return ticks > 32; }
+
+private:
+  Rectangle calc_body() {
+    auto body = src->get_body();
+    float x = body.x + (body.width / 2.f);
+    float y = body.y + (body.height / 2.f);
+
+    if (src->get_dir() == Dir::LEFT) {
+      body = Rectangle(x - W, y - (H / 2.f), W, H);
+    } else {
+      body = Rectangle(x, y - (H / 2.f), W, H);
+    }
+
+    return body;
+  }
 };
 
 class StabbyAirAttack : public Attack {
+private:
+  constexpr static float W = 16.f;
+  constexpr static float H = 54.f;
+
 public:
   StabbyAirAttack(Fighter *src)
-      : Attack(src, src->get_body(), 90.*DEG2RAD, 0., 50., 50.) {}
+      : Attack(src, src->get_body(), -90.f*DEG2RAD, 8.f, 20.f, 0.2f) {
+        body = calc_body();
+  }
 
-  bool is_done() const override { return true; }
+  void update(Game &game) override {
+    body = calc_body();
+
+    Attack::update(game);
+  }
+
+  void draw() const override {
+    if (is_active()) {
+      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
+    }
+  }
+
+  bool is_active() const override { return ticks >= 16 && ticks < 32; }
+
+  bool is_done() const override { return ticks > 32; }
+
+private:
+  Rectangle calc_body() {
+    auto body = src->get_body();
+    float x = body.x + (body.width / 2.f);
+    float y = body.y + (body.height / 2.f);
+
+    if (src->get_dir() == Dir::LEFT) {
+      body = Rectangle(x - W, y, W, H);
+    } else {
+      body = Rectangle(x, y, W, H);
+    }
+
+    return body;
+  }
 };
 
 Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
@@ -63,7 +109,7 @@ void Stabby::draw() const {
     src.x = 32.f * float((aFrames % 64) / 8);
     tex = Assets::STABBY_WALK;
   } else if (action == Action::JUMP) {
-    tex = Assets::STABBY_WALK;
+    tex = Assets::STABBY_JUMP;
   } else if (action == Action::GROUND_ATTACK) {
     dst.width = 96.f;
     if (dir == Dir::LEFT) {
@@ -72,13 +118,17 @@ void Stabby::draw() const {
     src.x = 48.f * float((aFrames % 64) / 8);
     src.width = 48.f;
     tex = Assets::STABBY_SWING;
-  } else {
-    DrawRectangleRec(rect_to_win(dst), GREEN);
+  } else if (action == Action::AIR_ATTACK) {
+    src.x = 32.f * float((aFrames % 64) / 8);
+    src.height = 48.f;
+    dst.height = 96.f;
+    tex = Assets::STABBY_AIR_ATTACK;
   }
 
   src.width *= float(dir);
   DrawTexturePro(tex, src, rect_to_win(dst), Vector2(0.f, 0.f), 0.f,
                  Color(225, 150, 150, 255));
+  DrawRectangleRec(body, Color(0, 0, 0, 128));
 }
 
 std::unique_ptr<Attack> Stabby::ground_attack() {
@@ -87,6 +137,6 @@ std::unique_ptr<Attack> Stabby::ground_attack() {
 }
 
 std::unique_ptr<Attack> Stabby::air_attack() {
-  set_cooldown(30);
+  set_cooldown(32);
   return std::make_unique<StabbyAirAttack>(this);
 }

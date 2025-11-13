@@ -1,7 +1,7 @@
-build
-run.sh
-fmt.sh
+/build
+/run.sh
+/fmt.sh
 
-.vscode
+/.vscode
 
-NOTES.md
+/NOTES.md

@@ -5,41 +5,34 @@
 #include "raylib.h"
 
 class Tile {
-public:
-  using UpdateFn = std::function<void(Tile &)>;
-
-public:
-  static constexpr float RISE_FALL_SPEED = 2.0f;
-  inline static const UpdateFn NO_OP = [](Tile &_) {};
-
+protected:
   Rectangle body;
   Vector2 v;
 
-  UpdateFn updateFn;
-
-  bool canFall;
-  float stoodOnTime;
-  float time;
-  float home_y;
-
 public:
-  Tile(float x, float y, float w, float h, UpdateFn updateFn = NO_OP);
-
-  Tile(float x, float y, float w, float h, float time);
+  Tile(float x, float y, float w, float h);
 
   /**
-   * Updates the tile's position then its velocity (using `Tile::updateFn`).
+   * Returns the tile's body.
    */
-  void update();
+  Rectangle get_body() const;
 
-  void stood_on();
-
-private:
   /**
-   * Handles tile falling/rising.
+   * Returns the tile's velocity.
    */
-  void handle_rise_fall();
+  Vector2 get_v() const;
+
+  /**
+   * Updates the tile.
+   * 
+   * By default, this does nothing.
+   */
+  virtual void update();
+
+  /**
+   * Called when the tile is stood on.
+   * 
+   * By default, this does nothing.
+   */
+  virtual void stood_on();
 };
-
-static const std::function<Vector2(const Tile &)> STATIONARY_TILE_FN =
-    [](const Tile &_) { return (Vector2){0.0f, 0.0f}; };

@@ -41,7 +41,8 @@ protected:
   int32_t iFrames;
   int32_t cooldown;
 
-  std::optional<const Tile *> ground;
+  bool hasDoubleJump;
+  std::optional<std::unique_ptr<Tile>*> ground;
 
   Action action;
   uint32_t aFrames;
@@ -73,6 +74,9 @@ public:
    */
   Rectangle get_body() const;
 
+  /** @brief Returns the fighter's velocity. */
+  Vector2 get_v() const;
+
   /**
    * Returns true if the fighter is on the ground, false if not.
    */
@@ -93,15 +97,6 @@ public:
    * @param action The action to be used.
    */
   void set_action(Action action);
-
-  /**
-   * The default update function for the fighter.
-   *
-   * Handles input, movement, and collision.
-   *
-   * @param game The game state to be used
-   */
-  void default_update(Game &game);
 
   /**
    * Updates the fighter.
