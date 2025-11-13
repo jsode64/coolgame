@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "raylib.h"
+#include "gamepad.hpp"
 
 class Attack;
 class Game;
@@ -51,16 +52,12 @@ protected:
   int32_t jumpKey;
   int32_t attackKey;
 
-  int32_t leftKeyController;
-  int32_t rightKeyController;
-  int32_t jumpKeyController;
-  int32_t attackKeyController;
+  Gamepad controller;
 
 public:
   Fighter(Rectangle body, float jumpSpeed, float acceleration,
           float decceleration, float maxSpeedH, int32_t leftKey,
-          int32_t rightKey, int32_t jumpKey, int32_t attackKey, int32_t leftKeyController,
-          int32_t rightKeyController, int32_t jumpKeyController, int32_t attackKeyController);
+          int32_t rightKey, int32_t jumpKey, int32_t attackKey, Gamepad controller);
 
   virtual ~Fighter() = default;
 
@@ -133,6 +130,13 @@ public:
    */
   virtual std::unique_ptr<Attack> air_attack() = 0;
 
+
+  /**
+   * Handles the fighter using an attack.
+   */
+  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
+
+
 protected:
   /**
    * Sets the attack cooldown.
@@ -143,12 +147,6 @@ protected:
    * Returns `true` if the attack cooldown is over, `false` if not.
    */
   bool can_attack() const;
-
-private:
-  /**
-   * Handles fighter movement via user input.
-   */
-  void handle_movement(bool left, bool right, bool jump);
 
   /**
    * Handles player being OOB (out of bounds).
@@ -163,12 +161,22 @@ private:
   void handle_collision(Stage &stage);
 
   /**
-   * Handles the fighter using an attack.
-   */
-  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
-
-  /**
    * Handles the fighter action state.
    */
   void handle_action(bool left, bool right);
+
+
+
+    /**
+   * Handles fighter movement via user input.
+   */
+  void handle_movement(bool left, bool right, bool jump);
+
+
+
+private:
+
+  
+
+
 };

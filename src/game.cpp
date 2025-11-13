@@ -7,19 +7,16 @@
 #include "fighters/oscar.hpp"
 #include "fighters/slug.hpp"
 
-Game::Game() : stage(Stage::test()), fighters(), attacks(), controller() {
-  fighters.emplace_back(std::make_unique<Stabby>(KEY_A, KEY_D, KEY_W, KEY_S, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
-  GAMEPAD_BUTTON_RIGHT_FACE_UP, GAMEPAD_BUTTON_RIGHT_FACE_LEFT));
+Game::Game() : stage(Stage::test()), fighters(), attacks(), controllers(0,1,2,3) {
+  fighters.emplace_back(std::make_unique<Stabby>(KEY_A, KEY_D, KEY_W, KEY_S, controllers[0]));
   fighters.emplace_back(
-      std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
-  GAMEPAD_BUTTON_RIGHT_FACE_UP, GAMEPAD_BUTTON_RIGHT_FACE_LEFT));
-  fighters.emplace_back(std::make_unique<Slug>(KEY_J, KEY_L, KEY_I, KEY_K, GAMEPAD_BUTTON_LEFT_FACE_LEFT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
-  GAMEPAD_BUTTON_RIGHT_FACE_UP, GAMEPAD_BUTTON_RIGHT_FACE_LEFT));
+      std::make_unique<Oscar>(KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, controllers[1]));
+  fighters.emplace_back(std::make_unique<Slug>(KEY_J, KEY_L, KEY_I, KEY_K, controllers[2]));
 }
 
 void Game::update() {
   stage.update();
-  controller.update();
+  controllers[0].update();
   for (auto &fighter : fighters)
     fighter->update(*this);
   for (auto &attack : attacks) {
@@ -37,7 +34,7 @@ void Game::update() {
 
 void Game::draw() const {
   stage.draw();
-  controller.id_display();
+  controllers[0].id_display();
   for (const auto &fighter : fighters)
     fighter->draw();
   for (const auto &attack : attacks)

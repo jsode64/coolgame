@@ -3,6 +3,7 @@
 #include "assets.hpp"
 #include "attack.hpp"
 #include "util.hpp"
+#include "gamepad.hpp"
 
 class StabbyGroundAttack : public Attack {
 private:
@@ -45,12 +46,41 @@ public:
 };
 
 Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
-           int32_t attackKey,  int32_t leftKeyController, int32_t rightKeyController, 
-           int32_t jumpKeyController, int32_t attackKeyController)
+           int32_t attackKey, Gamepad controller)
     : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
-              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, leftKeyController, rightKeyController, 
-              jumpKeyController, attackKeyController) {
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
   respawn();
+}
+
+void Stabby::default_update(Game &game) {
+  bool left = (IsKeyDown(leftKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_LEFT));
+  bool right = (IsKeyDown(rightKey)  || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
+  bool jump = (IsKeyDown(jumpKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_UP));
+
+  handle_movement(left, right, jump);
+  handle_oob();
+  handle_collision(game.get_stage());
+  handle_attacks(game.get_attacks());
+  handle_action(left, right);
+
+  cooldown--;
+  iFrames--;
+  aFrames++;
+}
+
+void Stabby::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
+  // If can't attack now, nothing to be done.
+  if (!can_attack()) {
+    return;
+  }
+  
+  if (IsKeyDown(attackKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) {
+    if (on_ground()) {
+      attacks.push_back(ground_attack());
+    } else {
+      attacks.push_back(air_attack());
+    }
+  }
 }
 
 void Stabby::draw() const {
@@ -92,3 +122,5 @@ std::unique_ptr<Attack> Stabby::air_attack() {
   set_cooldown(30);
   return std::make_unique<StabbyAirAttack>(this);
 }
+
+

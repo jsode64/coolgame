@@ -13,12 +13,10 @@
 Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
                  float decceleration, float maxSpeedH, int32_t leftKey,
                  int32_t rightKey, int32_t jumpKey, int32_t attackKey,
-                 int32_t leftKeyController, int32_t rightKeyController, 
-                 int32_t jumpKeyController, int32_t attackKeyController)
+                 Gamepad contoller)
     : body(body), jumpSpeed(jumpSpeed), acceleration(acceleration),
       decceleration(decceleration), maxSpeedH(maxSpeedH), leftKey(leftKey),
-      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey), leftKeyController(leftKeyController),
-      rightKeyController(rightKeyController), jumpKeyController(jumpKeyController), attackKeyController(attackKeyController) {
+      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey), controller(contoller) {
   v = Vector2(0.0f, 0.0f);
   dir = Dir::RIGHT;
 
@@ -72,9 +70,9 @@ void Fighter::set_action(Action _action) {
 }
 
 void Fighter::default_update(Game &game) {
-  bool left = (IsKeyDown(leftKey) || IsGamepadButtonDown(0, leftKeyController));
-  bool right = (IsKeyDown(rightKey) || IsGamepadButtonDown(0, rightKeyController));
-  bool jump = (IsKeyDown(jumpKey) || IsGamepadButtonDown(0, jumpKeyController));
+  bool left = (IsKeyDown(leftKey));
+  bool right = (IsKeyDown(rightKey));
+  bool jump = (IsKeyDown(jumpKey));
 
   handle_movement(left, right, jump);
   handle_oob();
@@ -118,7 +116,7 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
   }
 
   // Vertical movement.
-  if ((IsKeyDown(jumpKey) || IsGamepadButtonDown(0, jumpKeyController)) && ground.has_value() && cooldown < 0) {
+  if ((IsKeyDown(jumpKey)) && ground.has_value() && cooldown < 0) {
     v.y = -jumpSpeed;
     v.x += ground.value()->v.x;
   } else {
@@ -233,7 +231,7 @@ void Fighter::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
     return;
   }
 
-  if (IsKeyDown(attackKey) || IsGamepadButtonDown(0, attackKeyController)) {
+  if (IsKeyDown(attackKey)) {
     if (on_ground()) {
       attacks.push_back(ground_attack());
     } else {

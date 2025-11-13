@@ -3,6 +3,7 @@
 #include "assets.hpp"
 #include "attack.hpp"
 #include "util.hpp"
+#include "gamepad.hpp"
 
 class OscarGroundAttack : public Attack {
 private:
@@ -32,6 +33,37 @@ public:
   bool is_done() const override { return done; }
 };
 
+void Oscar::default_update(Game &game) {
+  bool left = (IsKeyDown(leftKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_LEFT));
+  bool right = (IsKeyDown(rightKey)  || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
+  bool jump = (IsKeyDown(jumpKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_UP));
+
+  handle_movement(left, right, jump);
+  handle_oob();
+  handle_collision(game.get_stage());
+  handle_attacks(game.get_attacks());
+  handle_action(left, right);
+
+  cooldown--;
+  iFrames--;
+  aFrames++;
+}
+
+void Oscar::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
+  // If can't attack now, nothing to be done.
+  if (!can_attack()) {
+    return;
+  }
+
+  if (IsKeyDown(attackKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) {
+    if (on_ground()) {
+      attacks.push_back(ground_attack());
+    } else {
+      attacks.push_back(air_attack());
+    }
+  }
+}
+
 class OscarAirAttack : public Attack {
 public:
   OscarAirAttack(Fighter *src)
@@ -41,11 +73,9 @@ public:
 };
 
 Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
-             int32_t attackKey, int32_t leftKeyController, int32_t rightKeyController, 
-             int32_t jumpKeyController, int32_t attackKeyController)
+             int32_t attackKey, Gamepad controller)
     : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 10.0f, ACCELERATION,
-              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, leftKeyController, rightKeyController, 
-              jumpKeyController, attackKeyController) {
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
   respawn();
 }
 

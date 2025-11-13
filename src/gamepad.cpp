@@ -2,17 +2,17 @@
 
 #include "raylib.h"
 
-Gamepad::Gamepad() {
-
+Gamepad::Gamepad(int portin) {
+    port = portin;
 }
 
 bool Gamepad::gamepad_check() {
-    bool controller_detect = IsGamepadAvailable(controller);
+    bool controller_detect = IsGamepadAvailable(port);
     return controller_detect;
 }
 
 void Gamepad::id_check(){
-    id = GetGamepadName(controller); 
+    id = GetGamepadName(port); 
 }
 
 void Gamepad::id_display() const{
@@ -23,12 +23,12 @@ void Gamepad::update() {
     if (gamepad_check()) {
         id_check();
         // Get axis values
-        float leftStickX = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_LEFT_X);
-        float leftStickY = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_LEFT_Y);
-        float rightStickX = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_RIGHT_X);
-        float rightStickY = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_RIGHT_Y);
-        float leftTrigger = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_LEFT_TRIGGER);
-        float rightTrigger = GetGamepadAxisMovement(controller, GAMEPAD_AXIS_RIGHT_TRIGGER);
+        float leftStickX = GetGamepadAxisMovement(port, GAMEPAD_AXIS_LEFT_X);
+        float leftStickY = GetGamepadAxisMovement(port, GAMEPAD_AXIS_LEFT_Y);
+        float rightStickX = GetGamepadAxisMovement(port, GAMEPAD_AXIS_RIGHT_X);
+        float rightStickY = GetGamepadAxisMovement(port, GAMEPAD_AXIS_RIGHT_Y);
+        float leftTrigger = GetGamepadAxisMovement(port, GAMEPAD_AXIS_LEFT_TRIGGER);
+        float rightTrigger = GetGamepadAxisMovement(port, GAMEPAD_AXIS_RIGHT_TRIGGER);
 
         // Calculate deadzones
         if (leftStickX > -leftStickDeadzoneX && leftStickX < leftStickDeadzoneX) leftStickX = 0.0f;
@@ -37,13 +37,14 @@ void Gamepad::update() {
         if (rightStickY > -rightStickDeadzoneY && rightStickY < rightStickDeadzoneY) rightStickY = 0.0f;
         if (leftTrigger < leftTriggerDeadzone) leftTrigger = -1.0f;
         if (rightTrigger < rightTriggerDeadzone) rightTrigger = -1.0f;
+
     }
     else {
         id = "Controller not found!!";
     }
 }
 
-Gamepad Gamepad::giveController(Gamepad &gamepad) {
-    return *this;
+int Gamepad::portReturn() {
+    return port;
 }
 

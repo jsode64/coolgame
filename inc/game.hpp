@@ -15,7 +15,7 @@ class Fighter;
 class Game {
 private:
   Stage stage;
-  Gamepad controller;
+  Gamepad controllers[4] = {0,1,2,3};
   std::vector<std::unique_ptr<Fighter>> fighters;
   std::list<std::unique_ptr<Attack>> attacks;
 

@@ -7,7 +7,7 @@
 class Gamepad {
 
     private:
-        int controller = 0;
+        int port;
         const char* id;
 
         const float leftStickDeadzoneX = 0.1f;
@@ -18,7 +18,7 @@ class Gamepad {
         const float rightTriggerDeadzone = -0.9f;
     public:
 
-        Gamepad();
+        Gamepad(int portin);
 
         bool gamepad_check();
 
@@ -28,5 +28,7 @@ class Gamepad {
 
         void id_check();
 
-        Gamepad giveController(Gamepad &gamepad);
+        Gamepad giveController();
+
+        int portReturn();
 };
