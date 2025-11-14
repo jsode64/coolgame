@@ -31,7 +31,8 @@ protected:
   float percentage;
   int32_t iFrames;
 
-  std::optional<const Tile *> ground;
+  bool hasDoubleJump;
+  std::optional<std::unique_ptr<Tile>*> ground;
 
   int32_t leftKey;
   int32_t rightKey;
@@ -62,6 +63,9 @@ public:
    */
   Rectangle get_body() const;
 
+  /** @brief Returns the fighter's velocity. */
+  Vector2 get_v() const;
+
   /**
    * Returns true if the fighter is on the ground, false if not.
    */
@@ -75,13 +79,13 @@ public:
   void hit(Attack &attack);
 
   /**
-   * The default update function for the fighter.
+   * Sets the action to the given one.
    *
-   * Handles input, movement, and collision.
+   * If the action is different than the current one, resets the action frames.
    *
-   * @param game The game state to be used
+   * @param action The action to be used.
    */
-  void default_update(Game &game);
+  void set_action(Action action);
 
   /**
    * Updates the fighter.

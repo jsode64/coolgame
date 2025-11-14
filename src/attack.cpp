@@ -23,7 +23,9 @@ void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters) {
   }
 }
 
-void Attack::update(Game &_) {}
+void Attack::update(Game &_) {
+  ticks++;
+}
 
 void Attack::on_hit(Fighter &f) { f.hit(*this); }
 
@@ -34,7 +36,7 @@ float Attack::get_damage() const {
 }
 
 Vector2 Attack::get_kb_vec(float p) const {
-  float m = k + (p * (g + 1.0) / 100.);
+  float m = k + (p * g / 100.);
 
   return Vector2(kx * m, ky * m);
 }
@@ -42,5 +44,3 @@ Vector2 Attack::get_kb_vec(float p) const {
 bool Attack::is_active() const { return true; }
 
 bool Attack::is_done() const { return false; }
-
-void Attack::default_update() { ticks++; }

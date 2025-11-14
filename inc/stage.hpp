@@ -3,32 +3,32 @@
 #include "raylib.h"
 #include "tile.hpp"
 
-#include <tuple>
+#include <memory>
 #include <vector>
 
 class Stage {
 private:
-  /// @brief A collection of the stage's bodies.
-  std::vector<Tile> tiles;
+  /** @brief Vector of tiles */
+  std::vector<std::unique_ptr<Tile>> tiles;
 
-  /// @brief The stage's color.
+  /** @brief Tile color */
   Color color;
 
 public:
   Stage();
 
-  /// @return Returns the test stage.
+  /** @brief The test stage. */
   static Stage test();
+
+  /** @brief Stage one. */
   static Stage stage_one();
 
-  /**
-   * Returns the stage's tile vector.
-   */
-  std::vector<Tile> &get_tiles();
+  /** @brief Returns a vector of the stage's tiles. */
+  std::vector<std::unique_ptr<Tile>>& get_tiles();
 
-  /// @brief Updates the stage's tiles.
+  /** @brief Updates the stage's tiles. */
   void update();
 
-  /// @brief Draws the stage.
+  /** @brief Draws the stage's tiles. */
   void draw() const;
 };

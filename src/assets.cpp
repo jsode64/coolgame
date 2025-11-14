@@ -10,6 +10,8 @@ Texture2D Assets::OSCAR_WALK = {0};
 Texture2D Assets::STABBY_IDLE = {0};
 Texture2D Assets::STABBY_WALK = {0};
 Texture2D Assets::STABBY_SWING = {0};
+Texture2D Assets::STABBY_JUMP = {0};
+Texture2D Assets::STABBY_AIR_ATTACK = {0};
 
 Texture2D Assets::SLUG_IDLE = {0};
 
@@ -29,5 +31,7 @@ bool Assets::load() {
          load_asset(STABBY_IDLE, "assets/stabby/stabby_idle.png") &&
          load_asset(STABBY_WALK, "assets/stabby/stabby_walk.png") &&
          load_asset(STABBY_SWING, "assets/stabby/stabby_swing.png") &&
+         load_asset(STABBY_JUMP, "assets/stabby/stabby_jump.png") &&
+         load_asset(STABBY_AIR_ATTACK, "assets/stabby/stabby_air_attack.png") &&
          load_asset(SLUG_IDLE, "assets/slug/slug.png");
 }
