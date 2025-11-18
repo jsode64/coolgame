@@ -84,6 +84,10 @@ void Fighter::update(Game &game) {
   cooldown--;
   iFrames--;
   aFrames++;
+
+  // Pause.
+  if (IsKeyDown(KEY_P))
+    game.currentState = State::Pause;
 }
 
 void Fighter::set_cooldown(int32_t _cooldown) { cooldown = _cooldown; }

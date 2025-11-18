@@ -6,10 +6,26 @@
 
 #include "attack.hpp"
 #include "fighter.hpp"
+#include "game.hpp"
+#include "pausemenu.hpp"
+#include "openingmenu.hpp"
+#include "levelmenu.hpp"
 #include "stage.hpp"
 
 class Attack;
 class Fighter;
+class PauseMenu;
+class OpeningMenu;
+class LevelMenu;
+
+enum class State {
+  Opening,
+  LevelSelect,
+  Playing,
+  Pause,
+  GameOver,
+  };
+
 
 class Game {
 private:
@@ -18,12 +34,21 @@ private:
   std::list<std::unique_ptr<Attack>> attacks;
 
 public:
+  State currentState; 
+
   Game();
 
   /**
    * Updates the game state.
    */
   void update();
+
+  /**
+   * @brief initializes with the given stage index.
+   */
+  void init(size_t i);
+
+  void handle_state(LevelMenu& level, OpeningMenu& opening, PauseMenu& paused);
 
   /**
    * Draws the game.
@@ -51,4 +76,6 @@ public:
    * @param attack The attack to be pushed
    */
   void push_attack(std::unique_ptr<Attack> atk);
+
+  void changeState(State newState);
 };
