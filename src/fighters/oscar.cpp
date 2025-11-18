@@ -21,7 +21,7 @@ public:
 
     // End attack if collided with anything.
     for (const auto &tile : game.get_stage().get_tiles()) {
-      if (CheckCollisionRecs(body, tile.body)) {
+      if (CheckCollisionRecs(body, tile->get_body())) {
         done = true;
         break;
       }
@@ -79,7 +79,7 @@ Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
   respawn();
 }
 
-void Oscar::update(Game &game) { default_update(game); }
+void Oscar::update(Game &game) { Fighter::update(game); }
 
 void Oscar::draw() const {
   if (action == Action::WALK) {
