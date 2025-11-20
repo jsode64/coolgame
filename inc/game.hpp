@@ -7,48 +7,43 @@
 #include "attack.hpp"
 #include "fighter.hpp"
 #include "game.hpp"
-#include "pausemenu.hpp"
-#include "openingmenu.hpp"
-#include "levelmenu.hpp"
+#include "level_select_menu.hpp"
+#include "main_menu.hpp"
 #include "stage.hpp"
 
 class Attack;
 class Fighter;
-class PauseMenu;
-class OpeningMenu;
-class LevelMenu;
 
 enum class State {
-  Opening,
+  Open,
   LevelSelect,
-  Playing,
-  Pause,
-  GameOver,
-  };
+  Play,
+};
 
+class LevelSelectMenu;
 
 class Game {
 private:
+  State state;
+
+  // Game state values:
+
   Stage stage;
   std::vector<std::unique_ptr<Fighter>> fighters;
   std::list<std::unique_ptr<Attack>> attacks;
 
-public:
-  State currentState; 
+  // Menu states:
 
+  MainMenu main_menu;
+  LevelSelectMenu level_select_menu;
+
+public:
   Game();
 
   /**
    * Updates the game state.
    */
   void update();
-
-  /**
-   * @brief initializes with the given stage index.
-   */
-  void init(size_t i);
-
-  void handle_state(LevelMenu& level, OpeningMenu& opening, PauseMenu& paused);
 
   /**
    * Draws the game.
@@ -70,12 +65,10 @@ public:
    */
   std::list<std::unique_ptr<Attack>> &get_attacks();
 
-  /**
-   * Pushes the attack to the game state.
-   *
-   * @param attack The attack to be pushed
-   */
-  void push_attack(std::unique_ptr<Attack> atk);
+private:
+  /** @brief Updates the game during play. */
+  void update_play();
 
-  void changeState(State newState);
+  /** @brief Initializes the play state to the given stage index. */
+  void init_play(size_t i);
 };

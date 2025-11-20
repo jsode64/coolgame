@@ -42,7 +42,7 @@ protected:
   int32_t cooldown;
 
   bool hasDoubleJump;
-  std::optional<std::unique_ptr<Tile>*> ground;
+  std::optional<std::unique_ptr<Tile> *> ground;
 
   Action action;
   uint32_t aFrames;

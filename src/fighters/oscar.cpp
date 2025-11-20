@@ -11,7 +11,7 @@ private:
 
 public:
   OscarGroundAttack(Fighter *src)
-      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 30., 2.), done(false) {
+      : Attack(src, src->get_body(), 90. * DEG2RAD, 10., 30., 2.), done(false) {
     vx = src->get_dir() == Dir::LEFT ? -1.f : 1.f;
   }
 
@@ -35,7 +35,7 @@ public:
 class OscarAirAttack : public Attack {
 public:
   OscarAirAttack(Fighter *src)
-      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 4., 2.) {}
+      : Attack(src, src->get_body(), 90. * DEG2RAD, 10., 4., 2.) {}
 
   bool is_done() const override { return true; }
 };
@@ -53,12 +53,12 @@ void Oscar::draw() const {
   if (action == Action::WALK) {
     float x = 32.f * float((aFrames % 48) / 6);
     DrawTexturePro(Assets::OSCAR_WALK,
-                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
-                   Vector2(0.f, 0.f), 0.f, RED);
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f),
+                   rect_to_win(body), Vector2(0.f, 0.f), 0.f, RED);
   } else {
     DrawTexturePro(Assets::OSCAR_WALK,
-                   Rectangle(0.f, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
-                   Vector2(0.f, 0.f), 0.f, BLUE);
+                   Rectangle(0.f, 0.f, 32.f * float(dir), 32.f),
+                   rect_to_win(body), Vector2(0.f, 0.f), 0.f, BLUE);
   }
 }
 

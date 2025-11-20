@@ -20,18 +20,14 @@ int main() {
   Game game;
   auto sb = LoadTexture("assets/hi.jpg");
 
-  PauseMenu paused = PauseMenu(1, 2, KEY_UP, KEY_DOWN, KEY_ENTER);
-  OpeningMenu opening = OpeningMenu(1, 2, KEY_UP, KEY_DOWN, KEY_ENTER);
-  LevelMenu level = LevelMenu(1, 2, KEY_UP, KEY_DOWN, KEY_ENTER);
-
   while (!WindowShouldClose()) {
     // Render in here:
     BeginDrawing();
     ClearBackground(WHITE);
     DrawTexturePro(Assets::FOREST_BG, Rectangle(0.f, 0.f, 800.f, 448.f),
-                   Rectangle(0.f, 0.f, GetScreenWidth(), GetScreenHeight()), Vector2(0.f, 0.f), 0.f,
-                   WHITE);
-    game.handle_state(level, opening, paused);
+                   Rectangle(0.f, 0.f, GetScreenWidth(), GetScreenHeight()),
+                   Vector2(0.f, 0.f), 0.f, WHITE);
+    game.update();
     EndDrawing();
   }
 

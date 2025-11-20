@@ -2,8 +2,11 @@
 
 #include <cmath>
 
-Attack::Attack(Fighter *src, Rectangle body, float angle, float d, float k, float g)
-    : src(src), body(body), ticks(0), kx(std::cos(angle) * float(src->get_dir())), ky(-std::sin(angle)), d(d), k(k), g(g) {}
+Attack::Attack(Fighter *src, Rectangle body, float angle, float d, float k,
+               float g)
+    : src(src), body(body), ticks(0),
+      kx(std::cos(angle) * float(src->get_dir())), ky(-std::sin(angle)), d(d),
+      k(k), g(g) {}
 
 void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters) {
   // If the attack is inactive there's no need to check.
@@ -23,17 +26,13 @@ void Attack::handle_collision(std::vector<std::unique_ptr<Fighter>> &fighters) {
   }
 }
 
-void Attack::update(Game &_) {
-  ticks++;
-}
+void Attack::update(Game &_) { ticks++; }
 
 void Attack::on_hit(Fighter &f) { f.hit(*this); }
 
 void Attack::draw() const {}
 
-float Attack::get_damage() const {
-  return d;
-}
+float Attack::get_damage() const { return d; }
 
 Vector2 Attack::get_kb_vec(float p) const {
   float m = k + (p * g / 100.);

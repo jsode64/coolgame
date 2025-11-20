@@ -24,14 +24,14 @@ public:
 
   /**
    * Updates the tile.
-   * 
+   *
    * By default, this does nothing.
    */
   virtual void update();
 
   /**
    * Called when the tile is stood on.
-   * 
+   *
    * By default, this does nothing.
    */
   virtual void stood_on();

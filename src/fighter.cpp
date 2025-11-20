@@ -84,10 +84,6 @@ void Fighter::update(Game &game) {
   cooldown--;
   iFrames--;
   aFrames++;
-
-  // Pause.
-  if (IsKeyDown(KEY_P))
-    game.currentState = State::Pause;
 }
 
 void Fighter::set_cooldown(int32_t _cooldown) { cooldown = _cooldown; }
@@ -119,7 +115,8 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
   }
 
   // Vertical movement.
-  if (IsKeyPressed(jumpKey) && (ground.has_value() || hasDoubleJump) && cooldown < 0) {
+  if (IsKeyPressed(jumpKey) && (ground.has_value() || hasDoubleJump) &&
+      cooldown < 0) {
     v.y = -jumpSpeed;
     if (on_ground()) {
       v.x += (*ground.value())->get_v().x;
@@ -216,17 +213,17 @@ void Fighter::handle_collision(Stage &stage) {
         tile->stood_on();
         hitDown = true;
       } else {
-        y = tileBody.y + tileBody.height;
+        y = tileBody.y + tileBody.height + tileV.y;
         hitUp = true;
       }
-      v.y = 0;
+      v.y = std::max(0.f, tileV.y);
     }
 
-      // Check for squish.
-      if ((hitLeft && hitRight) || (hitUp && hitDown)) {
-        respawn();
-        return;
-      }
+    // Check for squish.
+    if ((hitLeft && hitRight) || (hitUp && hitDown)) {
+      respawn();
+      return;
+    }
   }
 
   // Move to new position.
@@ -250,23 +247,24 @@ void Fighter::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
 }
 
 void Fighter::handle_action(bool left, bool right) {
-  if (cooldown == 0) {
-    if (action == Action::AIR_ATTACK) {
-      set_action(Action::JUMP);
-    } else {
-      set_action(Action::IDLE);
-    }
-  } else if (ground.has_value()) {
-    if (left != right) {
-      set_action(Action::WALK);
-    } else {
-      set_action(Action::IDLE);
-    }
-  } else {
-    if (cooldown > 0) {
+  // Handle landing during an air attack.
+  if (action == Action::AIR_ATTACK && on_ground()) {
+    cooldown = 0;
+    set_action(Action::IDLE);
+    return;
+  }
+
+  if (cooldown > 0) { // Keep attacking.
+    if (on_ground())
+      set_action(Action::GROUND_ATTACK);
+    else
       set_action(Action::AIR_ATTACK);
-    } else {
+  } else { // Tell what action the player should be doing.
+    if (!on_ground())
       set_action(Action::JUMP);
-    }
+    else if (v.x != 0.f)
+      set_action(Action::WALK);
+    else
+      set_action(Action::IDLE);
   }
 }

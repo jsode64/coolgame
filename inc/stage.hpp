@@ -23,8 +23,10 @@ public:
   /** @brief Stage one. */
   static Stage stage_one();
 
+  static Stage stage_two();
+
   /** @brief Returns a vector of the stage's tiles. */
-  std::vector<std::unique_ptr<Tile>>& get_tiles();
+  std::vector<std::unique_ptr<Tile>> &get_tiles();
 
   /** @brief Updates the stage's tiles. */
   void update();
