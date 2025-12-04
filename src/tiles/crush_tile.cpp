@@ -1,18 +1,17 @@
 #include "tiles/crush_tile.hpp"
 
-#include <iostream>
+#include <cmath>
+#include <numbers>
 
 #include "config.hpp"
 
-CrushTile::CrushTile(float x, float y, float w, float h, float ground)
-    : Tile(x, y, w, h), ground(ground) {}
+CrushTile::CrushTile(float x, float y, float w, float h, float speed)
+    : Tile(x, y, w, h), speed(speed) {}
 
 void CrushTile::update() {
-  if (body.y >= ground - body.height) {
-    v.y = -3.f;
-  } else if (body.y < -body.height) {
-    v.y = 15.f;
-  }
+  float t = (1.f + std::sin(speed * float(GetTime()))) / 2.f;
+  float targetX = (SIM_W - body.width) * t;
+  v.x = targetX - body.x;
 
   Tile::update();
 }

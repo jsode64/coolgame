@@ -15,6 +15,8 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
     : body(body), jumpSpeed(jumpSpeed), acceleration(acceleration),
       decceleration(decceleration), maxSpeedH(maxSpeedH), leftKey(leftKey),
       rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey) {
+isAlive = true;
+
   v = Vector2(0.0f, 0.0f);
   dir = Dir::RIGHT;
 
@@ -29,7 +31,7 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
   ground = std::nullopt;
 }
 
-void Fighter::respawn() {
+void Fighter::spawn() {
   body.x = (float(SIM_W) - body.width) / 2.f;
   body.y = (float(SIM_H) - body.height) / 2.f;
 
@@ -45,6 +47,8 @@ Dir Fighter::get_dir() const { return dir; }
 Rectangle Fighter::get_body() const { return body; }
 
 Vector2 Fighter::get_v() const { return v; }
+
+bool Fighter::is_alive() const {return isAlive;}
 
 bool Fighter::on_ground() const { return ground.has_value(); }
 
@@ -135,7 +139,7 @@ void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= SIM_W || body.y >= SIM_H;
 
   if (oob) {
-    respawn();
+    isAlive = false;
   }
 }
 
@@ -221,7 +225,7 @@ void Fighter::handle_collision(Stage &stage) {
 
     // Check for squish.
     if ((hitLeft && hitRight) || (hitUp && hitDown)) {
-      respawn();
+      isAlive = false;
       return;
     }
   }

@@ -42,9 +42,9 @@ public:
 
 Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
              int32_t attackKey)
-    : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 10.0f, ACCELERATION,
+    : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 12.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
-  respawn();
+  spawn();
 }
 
 void Oscar::update(Game &game) { Fighter::update(game); }

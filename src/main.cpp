@@ -24,9 +24,6 @@ int main() {
     // Render in here:
     BeginDrawing();
     ClearBackground(WHITE);
-    DrawTexturePro(Assets::FOREST_BG, Rectangle(0.f, 0.f, 800.f, 448.f),
-                   Rectangle(0.f, 0.f, GetScreenWidth(), GetScreenHeight()),
-                   Vector2(0.f, 0.f), 0.f, WHITE);
     game.update();
     EndDrawing();
   }

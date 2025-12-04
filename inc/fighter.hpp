@@ -30,6 +30,7 @@ class Fighter {
 protected:
   Rectangle body;
   Vector2 v;
+  bool isAlive;
 
   float jumpSpeed;
   float acceleration;
@@ -59,105 +60,62 @@ public:
 
   virtual ~Fighter() = default;
 
-  /**
-   * Respawns the fighter.
-   */
-  void respawn();
+  /** @brief Hits the player with the given attack. */
+  void hit(Attack &attack);
 
-  /**
-   * Returns the fighter's direction.
-   */
+  /** @brief Spawns the fighter. */
+  void spawn();
+
+  /** @brief Returns the fighter's direction. */
   Dir get_dir() const;
 
-  /**
-   * Returns the fighter's body.
-   */
+  /** @brief Returns the player's body. */
   Rectangle get_body() const;
 
   /** @brief Returns the fighter's velocity. */
   Vector2 get_v() const;
 
-  /**
-   * Returns true if the fighter is on the ground, false if not.
-   */
+  /** @brief Returns `true` if the fighter is alive, `false` if not. */
+  bool is_alive() const;
+
+  /** @brief Returns `true` if the fighter is on the ground, `false` if not. */
   bool on_ground() const;
 
-  /**
-   * Hits the player with the given attack.
-   *
-   * If the player has invincibility frames, does nothing.
-   */
-  void hit(Attack &attack);
-
-  /**
-   * Sets the action to the given one.
-   *
-   * If the action is different than the current one, resets the action frames.
-   *
-   * @param action The action to be used.
-   */
+  /** @brief Sets the action to the given one, or does nothing if already in that action. */
   void set_action(Action action);
 
-  /**
-   * Updates the fighter.
-   *
-   * By default calls `Fighter::default_update`, which should be called anway.
-   *
-   * @param game The game state to be used
-   */
+  /** @brief Updates the fighter. */
   virtual void update(Game &game);
 
-  /**
-   * Draws the fighter.
-   */
+  /** @brief Draws the fighter. */
   virtual void draw() const = 0;
 
-  /**
-   * Returns a new ground attack.
-   */
+  /** @brief Returns a new instance of the fighter's ground attack. */
   virtual std::unique_ptr<Attack> ground_attack() = 0;
 
-  /**
-   * Returns a new air attack.
-   */
+  /** @brief Returns a new instance of the fighter's air attack. */
   virtual std::unique_ptr<Attack> air_attack() = 0;
 
 protected:
-  /**
-   * Sets the attack cooldown.
-   */
+  /** @brief Sets the attack cooldown. */
   void set_cooldown(int32_t cooldown);
 
-  /**
-   * Returns `true` if the attack cooldown is over, `false` if not.
-   */
+  /** @brief Returns `true` if the attack cooldown is over, `false` if not. */
   bool can_attack() const;
 
 private:
-  /**
-   * Handles fighter movement via user input.
-   */
+  /** @brief Handles fighter movement via user input. */
   void handle_movement(bool left, bool right, bool jump);
 
-  /**
-   * Handles player being OOB (out of bounds).
-   */
+  /** @brief Handles the fighter being out of bounds. */
   void handle_oob();
 
-  /**
-   * Handles player collision.
-   *
-   * @param stage The stage to collide with
-   */
+  /** @brief Handles fighter collision with the given stage. */
   void handle_collision(Stage &stage);
 
-  /**
-   * Handles the fighter using an attack.
-   */
+  /** @brief Handles the fighter's attacking state. */
   void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
 
-  /**
-   * Handles the fighter action state.
-   */
+  /** @brief Handles the fighter's action state. */
   void handle_action(bool left, bool right);
 };

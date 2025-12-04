@@ -6,7 +6,7 @@
 #include "fighters/slug.hpp"
 #include "fighters/stabby.hpp"
 
-Game::Game() : state(State::Open), stage(), fighters(), attacks(), main_menu(), level_select_menu() {
+Game::Game() : state(State::Open), stage({0}, WHITE), fighters(), attacks(), main_menu(), level_select_menu() {
 
 }
 
@@ -49,6 +49,14 @@ std::vector<std::unique_ptr<Fighter>> &Game::get_fighters() { return fighters; }
 std::list<std::unique_ptr<Attack>> &Game::get_attacks() { return attacks; }
 
 void Game::update_play() {
+  // Press 'P' to return to main menu.
+  if (IsKeyPressed(KEY_P) || fighters.size() <= 1) {
+    main_menu = MainMenu();
+    level_select_menu = LevelSelectMenu();
+    state = State::Open;
+    return;
+  }
+
   stage.update();
   for (auto &fighter : fighters)
     fighter->update(*this);
@@ -56,6 +64,13 @@ void Game::update_play() {
     attack->update(*this);
     attack->handle_collision(fighters);
   }
+
+  // Remove fighters that are dead.
+  fighters.erase(std::remove_if(fighters.begin(), fighters.end(),
+                               [](const std::unique_ptr<Fighter> &fighters) {
+                                 return!fighters->is_alive();
+                               }),
+                fighters.end());
 
   // Remove attacks that are done.
   attacks.erase(std::remove_if(attacks.begin(), attacks.end(),
@@ -67,12 +82,17 @@ void Game::update_play() {
 
 void Game::init_play(size_t i) {
   if (i == 0) {
-    stage = Stage::test();
-  } else if (i == 1) {
     stage = Stage::stage_one();
-  } else if (i == 2) {
+  } else if (i == 1) {
     stage = Stage::stage_two();
-  } else {
+  } else if (i == 2) {
+    stage = Stage::stage_three();
+  } else if (i == 3) {
+    stage = Stage::stage_four();
+  } else if (i == 4) {
+    stage = Stage::stage_five();
+   }
+    else {
     throw std::runtime_error("Bad level select");
   }
 

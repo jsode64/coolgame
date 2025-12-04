@@ -3,7 +3,7 @@
 #include "util.hpp"
 
 LevelSelectMenu::LevelSelectMenu()
-    : options{"Level 1", "Level 2", "Level 3", "Level 4", "Level 5"}, choice(0),
+    : options{"Destination", "Pillars", "Crush", "Slop", "Sky"}, choice(0),
       selected(false) {}
 
 bool LevelSelectMenu::choice_made() const { return selected; }
@@ -28,6 +28,6 @@ void LevelSelectMenu::draw() const {
     Rectangle body =
         rect_to_win(Rectangle(50.f, 50.f + (float(i) * 75.f), 860.f, 50.f));
     DrawRectangleRec(body, i == choice ? GREEN : RED);
-    DrawText(options[i], body.x, body.y, 12, BLACK);
+    DrawText(options[i], body.x, body.y, 14, BLACK);
   }
 }

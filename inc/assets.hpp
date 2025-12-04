@@ -4,7 +4,10 @@
 
 class Assets {
 public:
+static Texture2D SKY_BG;
+  static Texture2D CITY_BG;
   static Texture2D FOREST_BG;
+  static Texture2D HELL_BG;
 
   static Texture2D OSCAR_IDLE;
   static Texture2D OSCAR_WALK;
