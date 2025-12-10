@@ -16,7 +16,7 @@ void Gamepad::id_check(){
 }
 
 void Gamepad::id_display() const{
-    DrawText(id, 190, 200, 20, RED);
+    // DrawText(id, 190, 200, 20, RED);
 }
 
 void Gamepad::update() {
