@@ -39,6 +39,7 @@ protected:
   Dir dir;
 
   float percentage;
+  int32_t stocks;
   int32_t iFrames;
   int32_t cooldown;
 
@@ -129,7 +130,14 @@ public:
   /**
    * Handles the fighter using an attack.
    */
-  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
+  virtual void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
+
+
+
+    /**
+   * Handles fighter movement via user input.
+   */
+  virtual void handle_movement(bool left, bool right, bool jump);
 
 
 protected:
@@ -162,11 +170,11 @@ protected:
 
 
 
-    /**
-   * Handles fighter movement via user input.
-   */
-  void handle_movement(bool left, bool right, bool jump);
-
+  /*
+  *  Draws percentage and stocks to the screen.
+  */
+  void draw_ui();
+ 
 
 
 private:

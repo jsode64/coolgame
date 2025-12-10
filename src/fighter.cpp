@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #include "config.hpp"
 
@@ -24,6 +25,7 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
   aFrames = 0;
 
   percentage = 0.f;
+  stocks = 3;
   iFrames = 0;
   cooldown = 0;
 
@@ -82,10 +84,17 @@ void Fighter::update(Game &game) {
   handle_collision(game.get_stage());
   handle_attacks(game.get_attacks());
   handle_action(left, right);
+  draw_ui();
 
   cooldown--;
   iFrames--;
   aFrames++;
+}
+
+void Fighter::draw_ui() {
+  std::string percentString = std::to_string(percentage);
+  const char* percentDraw = percentString.c_str();
+  DrawText(percentDraw, SIM_W/2, SIM_H/2, 20, RED);
 }
 
 void Fighter::set_cooldown(int32_t _cooldown) { cooldown = _cooldown; }
@@ -135,8 +144,10 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
 void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= SIM_W || body.y >= SIM_H;
 
-  if (oob) {
+  if (oob && stocks > 1) {
+    stocks--;
     respawn();
+  } else {
   }
 }
 

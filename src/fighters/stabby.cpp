@@ -4,6 +4,8 @@
 #include "attack.hpp"
 #include "util.hpp"
 #include "gamepad.hpp"
+#include "config.hpp"
+#include <cmath>
 
 class StabbyGroundAttack : public Attack {
 private:
@@ -98,7 +100,7 @@ Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
   respawn();
 }
 
-void Stabby::default_update(Game &game) {
+void Stabby::update(Game &game) {
   bool left = (IsKeyDown(leftKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_LEFT));
   bool right = (IsKeyDown(rightKey)  || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_LEFT_FACE_RIGHT));
   bool jump = (IsKeyDown(jumpKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_UP));
@@ -112,6 +114,47 @@ void Stabby::default_update(Game &game) {
   cooldown--;
   iFrames--;
   aFrames++;
+}
+
+void Stabby::handle_movement(bool left, bool right, bool jump) {
+  // Horizontal movement.
+  if (can_attack()) {
+    if (left) {
+      v.x -= std::clamp(v.x - -maxSpeedH, 0.f, acceleration);
+      dir = Dir::LEFT;
+    }
+    if (right) {
+      v.x += std::clamp(maxSpeedH - v.x, 0.f, acceleration);
+      dir = Dir::RIGHT;
+    }
+  }
+
+  // Deccelerate if no key is pressed.
+  if (!can_attack() || (!left && !right)) {
+    if (std::abs(v.x) <= decceleration) {
+      // Slowed down to a stop.
+      v.x = 0.f;
+    } else {
+      // Deccelerate.
+      v.x -= std::copysign(decceleration, v.x);
+    }
+  }
+
+  // Vertical movement.
+  if ((IsKeyPressed(jumpKey) || IsGamepadButtonDown(controller.portReturn(), GAMEPAD_BUTTON_RIGHT_FACE_UP)) && (ground.has_value() || hasDoubleJump) && cooldown < 0) {
+    v.y = -jumpSpeed;
+    if (on_ground()) {
+      v.x += (*ground.value())->get_v().x;
+    } else {
+      hasDoubleJump = false;
+    }
+  } else {
+    v.y += GRAVITY;
+  }
+
+  // Limit player speed.
+  v.y = std::min(v.y, 2.0f * maxSpeedH);
+
 }
 
 void Stabby::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
