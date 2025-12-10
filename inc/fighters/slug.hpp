@@ -18,7 +18,6 @@ public:
 
   std::unique_ptr<Attack> air_attack() override;
 
-  void update(Game &game) override;
 
   void draw() const override;
 
@@ -26,8 +25,15 @@ public:
   /**
    * Handles the fighter using an attack.
    */
-  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks);
+  void handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) override;
 
   
-  void default_update(Game &game);
+  void update(Game &game) override;
+
+
+
+    /**
+   * Handles fighter movement via user input.
+   */
+  void handle_movement(bool left, bool right, bool jump) override;
 };

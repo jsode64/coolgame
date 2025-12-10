@@ -61,11 +61,6 @@ public:
         body = calc_body();
   }
 
-  void update(Game &game) override {
-    body = calc_body();
-
-    Attack::update(game);
-  }
 
   void draw() const override {
     if (is_active()) {
