@@ -87,7 +87,7 @@ private:
 Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey, Gamepad controller)
     : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
-              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
   spawn();
 }
 
