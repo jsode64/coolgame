@@ -6,18 +6,38 @@
 
 #include "attack.hpp"
 #include "fighter.hpp"
+#include "game.hpp"
+#include "level_select_menu.hpp"
+#include "main_menu.hpp"
 #include "stage.hpp"
 #include "gamepad.hpp"
 
 class Attack;
 class Fighter;
 
+enum class State {
+  Open,
+  LevelSelect,
+  Play,
+};
+
+class LevelSelectMenu;
+
 class Game {
 private:
+  State state;
+
+  // Game state values:
+
   Stage stage;
   Gamepad controllers[4] = {0,1,2,3};
   std::vector<std::unique_ptr<Fighter>> fighters;
   std::list<std::unique_ptr<Attack>> attacks;
+
+  // Menu states:
+
+  MainMenu main_menu;
+  LevelSelectMenu level_select_menu;
 
 public:
   Game();
@@ -52,10 +72,10 @@ public:
    */
   std::list<std::unique_ptr<Attack>> &get_attacks();
 
-  /**
-   * Pushes the attack to the game state.
-   *
-   * @param attack The attack to be pushed
-   */
-  void push_attack(std::unique_ptr<Attack> atk);
+private:
+  /** @brief Updates the game during play. */
+  void update_play();
+
+  /** @brief Initializes the play state to the given stage index. */
+  void init_play(size_t i);
 };

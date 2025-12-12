@@ -15,7 +15,7 @@ private:
 
 public:
   SlugGroundAttack(Fighter *src)
-      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 4., 2.), done(false) {
+      : Attack(src, src->get_body(), 90. * DEG2RAD, 10., 4., 2.), done(false) {
     vx = src->get_dir() == Dir::LEFT ? -1.f : 1.f;
   }
 
@@ -38,9 +38,9 @@ public:
 
 Slug::Slug(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey, Gamepad controller)
-    : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
+    : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 20.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
-  respawn();
+  spawn();
 }
 
 void Slug::update(Game &game) {
@@ -118,7 +118,7 @@ void Slug::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
 class SlugAirAttack : public Attack {
 public:
   SlugAirAttack(Fighter *src)
-      : Attack(src, src->get_body(), 90.*DEG2RAD, 10., 4., 2.) {}
+      : Attack(src, src->get_body(), 90. * DEG2RAD, 10., 4., 2.) {}
 
   bool is_done() const override { return true; }
 };
@@ -131,8 +131,8 @@ void Slug::draw() const {
     auto tick = (aFrames % 60) / 15;
     float x = tick == 3 ? 32.f : float(tick * 32);
     DrawTexturePro(Assets::SLUG_IDLE,
-                   Rectangle(x, 0.f, 32.f * float(dir), 32.f), rect_to_win(body),
-                   Vector2(0.f, 0.f), 0.f, BROWN);
+                   Rectangle(x, 0.f, 32.f * float(dir), 32.f),
+                   rect_to_win(body), Vector2(0.f, 0.f), 0.f, BROWN);
   }
 }
 

@@ -2,7 +2,10 @@
 
 #include <iostream>
 
+Texture2D Assets::SKY_BG = {0};
+Texture2D Assets::CITY_BG = {0};
 Texture2D Assets::FOREST_BG = {0};
+Texture2D Assets::HELL_BG = {0};
 
 Texture2D Assets::OSCAR_IDLE = {0};
 Texture2D Assets::OSCAR_WALK = {0};
@@ -25,7 +28,10 @@ bool load_asset(Texture2D &tex, const char *path) {
 }
 
 bool Assets::load() {
-  return load_asset(FOREST_BG, "assets/bgs/forest_bg.png") &&
+  return load_asset(SKY_BG, "assets/bgs/sky_bg.png") &&
+  load_asset(CITY_BG, "assets/bgs/city_bg.png") &&
+        load_asset(FOREST_BG, "assets/bgs/forest_bg.png") &&
+        load_asset(HELL_BG, "assets/bgs/hell_bg.png") &&
          load_asset(OSCAR_IDLE, "assets/foo.png") &&
          load_asset(OSCAR_WALK, "assets/mansheet.png") &&
          load_asset(STABBY_IDLE, "assets/stabby/stabby_idle.png") &&

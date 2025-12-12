@@ -17,7 +17,9 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
                  Gamepad contoller)
     : body(body), jumpSpeed(jumpSpeed), acceleration(acceleration),
       decceleration(decceleration), maxSpeedH(maxSpeedH), leftKey(leftKey),
-      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey), controller(contoller) {
+      rightKey(rightKey), jumpKey(jumpKey), attackKey(attackKey), controller(controller) {
+isAlive = true;
+
   v = Vector2(0.0f, 0.0f);
   dir = Dir::RIGHT;
 
@@ -33,7 +35,7 @@ Fighter::Fighter(Rectangle body, float jumpSpeed, float acceleration,
   ground = std::nullopt;
 }
 
-void Fighter::respawn() {
+void Fighter::spawn() {
   body.x = (float(SIM_W) - body.width) / 2.f;
   body.y = (float(SIM_H) - body.height) / 2.f;
 
@@ -49,6 +51,8 @@ Dir Fighter::get_dir() const { return dir; }
 Rectangle Fighter::get_body() const { return body; }
 
 Vector2 Fighter::get_v() const { return v; }
+
+bool Fighter::is_alive() const {return isAlive;}
 
 bool Fighter::on_ground() const { return ground.has_value(); }
 
@@ -126,7 +130,8 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
   }
 
   // Vertical movement.
-  if (IsKeyPressed(jumpKey) && (ground.has_value() || hasDoubleJump) && cooldown < 0) {
+  if (IsKeyPressed(jumpKey) && (ground.has_value() || hasDoubleJump) &&
+      cooldown < 0) {
     v.y = -jumpSpeed;
     if (on_ground()) {
       v.x += (*ground.value())->get_v().x;
@@ -144,10 +149,8 @@ void Fighter::handle_movement(bool left, bool right, bool jump) {
 void Fighter::handle_oob() {
   bool oob = body.x <= -body.width || body.x >= SIM_W || body.y >= SIM_H;
 
-  if (oob && stocks > 1) {
-    stocks--;
-    respawn();
-  } else {
+  if (oob) {
+    isAlive = false;
   }
 }
 
@@ -225,17 +228,17 @@ void Fighter::handle_collision(Stage &stage) {
         tile->stood_on();
         hitDown = true;
       } else {
-        y = tileBody.y + tileBody.height;
+        y = tileBody.y + tileBody.height + tileV.y;
         hitUp = true;
       }
-      v.y = 0;
+      v.y = std::max(0.f, tileV.y);
     }
 
-      // Check for squish.
-      if ((hitLeft && hitRight) || (hitUp && hitDown)) {
-        respawn();
-        return;
-      }
+    // Check for squish.
+    if ((hitLeft && hitRight) || (hitUp && hitDown)) {
+      isAlive = false;
+      return;
+    }
   }
 
   // Move to new position.
@@ -259,23 +262,24 @@ void Fighter::handle_attacks(std::list<std::unique_ptr<Attack>> &attacks) {
 }
 
 void Fighter::handle_action(bool left, bool right) {
-  if (cooldown == 0) {
-    if (action == Action::AIR_ATTACK) {
-      set_action(Action::JUMP);
-    } else {
-      set_action(Action::IDLE);
-    }
-  } else if (ground.has_value()) {
-    if (left != right) {
-      set_action(Action::WALK);
-    } else {
-      set_action(Action::IDLE);
-    }
-  } else {
-    if (cooldown > 0) {
+  // Handle landing during an air attack.
+  if (action == Action::AIR_ATTACK && on_ground()) {
+    cooldown = 0;
+    set_action(Action::IDLE);
+    return;
+  }
+
+  if (cooldown > 0) { // Keep attacking.
+    if (on_ground())
+      set_action(Action::GROUND_ATTACK);
+    else
       set_action(Action::AIR_ATTACK);
-    } else {
+  } else { // Tell what action the player should be doing.
+    if (!on_ground())
       set_action(Action::JUMP);
-    }
+    else if (v.x != 0.f)
+      set_action(Action::WALK);
+    else
+      set_action(Action::IDLE);
   }
 }

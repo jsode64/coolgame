@@ -14,8 +14,8 @@ private:
 
 public:
   StabbyGroundAttack(Fighter *src)
-      : Attack(src, src->get_body(), 30.f*DEG2RAD, 15.f, 15.f, 1.2f) {
-        body = calc_body();
+      : Attack(src, src->get_body(), 30.f * DEG2RAD, 15.f, 15.f, 1.2f) {
+    body = calc_body();
   }
 
   void update(Game &game) override {
@@ -25,9 +25,7 @@ public:
   }
 
   void draw() const override {
-    if (is_active()) {
-      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
-    }
+
   }
 
   bool is_active() const override { return ticks >= 8 && ticks < 16; }
@@ -57,20 +55,18 @@ private:
 
 public:
   StabbyAirAttack(Fighter *src)
-      : Attack(src, src->get_body(), -90.f*DEG2RAD, 8.f, 20.f, 0.2f) {
-        body = calc_body();
+      : Attack(src, src->get_body(), -90.f * DEG2RAD, 8.f, 20.f, 0.2f) {
+    body = calc_body();
   }
 
 
   void draw() const override {
-    if (is_active()) {
-      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
-    }
+
   }
 
   bool is_active() const override { return ticks >= 16 && ticks < 32; }
 
-  bool is_done() const override { return ticks > 32; }
+  bool is_done() const override { return ticks > 32 || src->on_ground(); }
 
 private:
   Rectangle calc_body() {
@@ -91,8 +87,8 @@ private:
 Stabby::Stabby(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey, Gamepad controller)
     : Fighter(Rectangle(0.f, 0.f, 20.f, 48.f), 15.f, ACCELERATION,
-              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
-  respawn();
+              DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey) {
+  spawn();
 }
 
 void Stabby::update(Game &game) {
@@ -198,7 +194,6 @@ void Stabby::draw() const {
   src.width *= float(dir);
   DrawTexturePro(tex, src, rect_to_win(dst), Vector2(0.f, 0.f), 0.f,
                  Color(225, 150, 150, 255));
-  DrawRectangleRec(body, Color(0, 0, 0, 128));
 }
 
 std::unique_ptr<Attack> Stabby::ground_attack() {

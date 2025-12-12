@@ -48,15 +48,14 @@ public:
 
   /**
    * Returns the attack's damage.
-   * 
+   *
    * @return The attack's damage.
    */
   float get_damage() const;
 
-
   /**
    * The attack's knockback vector.
-   * 
+   *
    * @param p The target's percent.
    *
    * @return The attack's knockback
