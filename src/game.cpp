@@ -1,5 +1,7 @@
 #include "game.hpp"
 
+#include <algorithm>
+
 #include "raylib.h"
 
 #include "fighters/oscar.hpp"

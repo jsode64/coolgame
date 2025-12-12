@@ -22,9 +22,7 @@ public:
   }
 
   void draw() const override {
-    if (is_active()) {
-      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
-    }
+
   }
 
   bool is_active() const override { return ticks >= 8 && ticks < 16; }
@@ -65,9 +63,7 @@ public:
   }
 
   void draw() const override {
-    if (is_active()) {
-      DrawRectangleRec(rect_to_win(body), Color(255, 0, 0, 128));
-    }
+
   }
 
   bool is_active() const override { return ticks >= 16 && ticks < 32; }
@@ -128,7 +124,6 @@ void Stabby::draw() const {
   src.width *= float(dir);
   DrawTexturePro(tex, src, rect_to_win(dst), Vector2(0.f, 0.f), 0.f,
                  Color(225, 150, 150, 255));
-  DrawRectangleRec(body, Color(0, 0, 0, 128));
 }
 
 std::unique_ptr<Attack> Stabby::ground_attack() {
