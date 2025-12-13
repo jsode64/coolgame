@@ -40,7 +40,7 @@ public:
 
 Oscar::Oscar(int32_t leftKey, int32_t rightKey, int32_t jumpKey,
            int32_t attackKey, Gamepad controller)
-    : Fighter(Rectangle(0.f, 0.f, 40.f, 40.f), 15.f, ACCELERATION,
+    : Fighter(Rectangle(0.0f, 0.0f, 50.0f, 50.0f), 12.0f, ACCELERATION,
               DECCELERATION, MAX_SPEED, leftKey, rightKey, jumpKey, attackKey, controller) {
   spawn();
 }
